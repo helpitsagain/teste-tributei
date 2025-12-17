@@ -7,8 +7,6 @@ export const getToDos = (req: Request, res: Response) => {
 
   const result = toDoService.getToDosPaginated(page, limit);
 
-  console.log("get!");
-
   res.json(result);
 };
 

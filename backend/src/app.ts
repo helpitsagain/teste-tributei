@@ -5,6 +5,7 @@ import toDoRoutes from "./routes/todo.routes";
 const app = express();
 
 app.use(cors());
+
 app.use(express.json());
 
 // Rota de teste
