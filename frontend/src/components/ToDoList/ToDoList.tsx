@@ -27,7 +27,7 @@ const TodoList: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await getToDos(page, 20);
+      const response = await getToDos(page, 10);
 
       setToDos((prev) => [...prev, ...response.toDos]);
 

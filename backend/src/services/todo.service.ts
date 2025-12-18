@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import { ToDo, getToDos, setToDos } from "../models/todo.model";
 
 export const getToDosPaginated = (page: number, limit: number) => {
@@ -50,4 +51,37 @@ export const bulkUpdateToDos = (ids: string[], updates: Partial<ToDo>) => {
   setToDos(toDos);
 
   return updatedToDos;
+};
+
+export const createToDo = (title: string, description: string) => {
+  const toDos = getToDos();
+
+  const newToDo: ToDo = {
+    id: uuidv4(),
+    title,
+    description,
+    completed: false,
+  };
+
+  toDos.push(newToDo);
+
+  setToDos(toDos);
+
+  return newToDo;
+};
+
+export const deleteToDo = (id: string) => {
+  const toDos = getToDos();
+
+  const index = toDos.findIndex((toDo) => toDo.id === id);
+
+  if (index === -1) {
+    return null;
+  }
+
+  const [removedToDo] = toDos.splice(index, 1);
+
+  setToDos(toDos);
+
+  return removedToDo;
 };

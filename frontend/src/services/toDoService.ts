@@ -24,3 +24,14 @@ export const bulkUpdateToDos = async (
   const res = await api.put("/bulk", { ids, updates });
   return res.data;
 };
+
+export const createToDo = async (newToDo: ToDo): Promise<ToDo> => {
+  const res = await api.post("/item/new", { newToDo });
+  console.log("res:", res);
+  return res.data;
+};
+
+export const deleteToDo = async (id: string): Promise<ToDo> => {
+  const res = await api.delete(`item/delete/${id}`);
+  return res.data;
+};
