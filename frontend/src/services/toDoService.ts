@@ -6,7 +6,6 @@ export const getToDos = async (
   limit: number = 5,
 ): Promise<ToDosResponse> => {
   const res = await api.get("items", { params: { page, limit } });
-  console.log("res:");
   return res.data;
 };
 

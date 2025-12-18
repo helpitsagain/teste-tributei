@@ -13,7 +13,7 @@ import Error from "../Error/Error";
 
 const TodoList: React.FC = () => {
   const [toDos, setToDos] = useState<ToDo[]>([]);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,16 +27,15 @@ const TodoList: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await getToDos(page, 10);
-      console.log("response", response.toDos);
+      const response = await getToDos(page, 20);
 
       setToDos((prev) => [...prev, ...response.toDos]);
 
       setPage((prev) => prev + 1);
 
       setHasMore(response.page < response.totalPages);
-    } catch (err) {
-      console.log(err);
+    } catch (e) {
+      console.log(e);
 
       setError("Failed to load todos. Please try again.");
     } finally {
@@ -79,19 +78,20 @@ const TodoList: React.FC = () => {
       setIsBulkModalOpen(false);
     } catch (e) {
       console.log(e);
+
       setError("Failed to update to-dos.");
     }
   };
 
   const handleUpdateTodo = async (updatedToDo: ToDo) => {
     try {
-      console.log("updatedTodo", updatedToDo);
       await updateToDo(updatedToDo.id, updatedToDo);
       setToDos((prev) =>
         prev.map((todo) => (todo.id === updatedToDo.id ? updatedToDo : todo)),
       );
     } catch (e) {
       console.log(e);
+
       setError("Failed to update to-do.");
     }
   };
