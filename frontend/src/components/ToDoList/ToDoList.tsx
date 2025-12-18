@@ -24,6 +24,7 @@ const TodoList: React.FC = () => {
   const [selectedToDos, setSelectedToDos] = useState<string[]>([]);
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
   const [isNewToDoModalOpen, setIsNewToDoModalOpen] = useState(false);
+  const [isListEmpty, setIsListEmpty] = useState(false);
 
   const initialLoadRef = useRef(false);
 
@@ -34,9 +35,17 @@ const TodoList: React.FC = () => {
     try {
       const response = await getToDos(page, PAGE_LIMIT);
 
-      setToDos((prev) => [...prev, ...response.toDos]);
+      setToDos((prev) => {
+        const existingIds = new Set(prev.map((toDo) => toDo.id));
 
-      setPage((prev) => prev + 1);
+        const newToDos = response.toDos.filter(
+          (toDo) => !existingIds.has(toDo.id),
+        );
+
+        return [...prev, ...newToDos];
+      });
+
+      setPage(response.page + 1);
 
       setHasMore(response.page < response.totalPages);
     } catch (e) {
@@ -74,7 +83,7 @@ const TodoList: React.FC = () => {
     }
   };
 
-  const handleBulkConfirm = async (updates: Partial<ToDo>) => {
+  const handleBulkUpdate = async (updates: Partial<ToDo>) => {
     try {
       await bulkUpdateToDos(selectedToDos, updates);
 
@@ -85,6 +94,7 @@ const TodoList: React.FC = () => {
       );
 
       setIsBulkModalOpen(false);
+      setSelectedToDos([]);
     } catch (e) {
       console.log(e);
 
@@ -96,20 +106,38 @@ const TodoList: React.FC = () => {
     try {
       await bulkDeleteToDos(selectedToDos);
 
+      const { remainingToDos } = toDos.reduce(
+        (acc, toDo) => {
+          if (ids.includes(toDo.id)) {
+            acc.deletedToDos.push(toDo);
+          } else {
+            acc.remainingToDos.push(toDo);
+          }
+          return acc;
+        },
+        { remainingToDos: [], deletedToDos: [] } as {
+          remainingToDos: ToDo[];
+          deletedToDos: ToDo[];
+        },
+      );
+
       setToDos((prev) => prev.filter((toDo) => !ids.includes(toDo.id)));
 
       setIsBulkModalOpen(false);
+      setSelectedToDos([]);
 
-      if (toDos.length === 0) {
-        getToDos(page, PAGE_LIMIT);
+      if (remainingToDos.length === 0) {
+        setPage(1);
+        setIsListEmpty(true);
       }
     } catch (e) {
-      console.log("Error:", e);
+      console.log(e);
 
       setError("Failed to delete to-dos.");
     }
   };
 
+  // TODO: implementar form para novo to-do
   const handleNewToDo = async (newToDo: Partial<ToDo>) => {
     try {
       console.log(newToDo);
@@ -141,6 +169,13 @@ const TodoList: React.FC = () => {
       loadToDos();
     }
   }, [loadToDos]);
+
+  useEffect(() => {
+    if (isListEmpty) {
+      setIsListEmpty(false);
+      loadToDos();
+    }
+  }, [isListEmpty, loadToDos]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -209,7 +244,7 @@ const TodoList: React.FC = () => {
         <BulkActionModal
           selectedIds={selectedToDos}
           todos={toDos}
-          onConfirm={handleBulkConfirm}
+          onConfirm={handleBulkUpdate}
           onDelete={handleBulkDelete}
           onCancel={() => setIsBulkModalOpen(false)}
         />
