@@ -206,6 +206,11 @@ const TodoList: React.FC = () => {
             ? "Deselect All"
             : "Select All"}
         </button>
+        {!!selectedToDos.length && selectedToDos.length !== toDos.length ? (
+          <button onClick={() => setSelectedToDos([])}>Deselect all</button>
+        ) : (
+          <></>
+        )}
         <button
           onClick={handleBulkActionButton}
           disabled={selectedToDos.length === 0}
