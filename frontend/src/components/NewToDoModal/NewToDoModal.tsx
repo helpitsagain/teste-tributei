@@ -1,5 +1,6 @@
 import React from "react";
 import { ToDo } from "../../types/toDo";
+import "./NewToDoModal.scss";
 
 interface NewToDoModalProps {
   newToDo: Partial<ToDo>;
@@ -17,32 +18,11 @@ const NewToDoModal: React.FC<NewToDoModalProps> = ({
   };
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: "0",
-        left: "0",
-        width: "100%",
-        height: "100%",
-        backgroundColor: "rgba(0,0,0,0.5)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: "white",
-          padding: "20px",
-          borderRadius: "5px",
-          maxWidth: "500px",
-          width: "100%",
-        }}
-      >
-        <h2>Create new to-do</h2>
-        <div>include form for new to-do</div>
-        <br />
-        <div>
+    <div className="modal-overlay">
+      <div className="new-todo-modal">
+        <h2 className="new-todo-modal__title">Create new to-do</h2>
+        <div className="new-todo-modal__content">include form for new to-do</div>
+        <div className="new-todo-modal__actions">
           <button onClick={handleCreate}>Create</button>
           <button onClick={onCancel}>Cancel</button>
         </div>

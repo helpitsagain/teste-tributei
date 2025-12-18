@@ -12,6 +12,7 @@ import BulkActionModal from "../BulkActionModal/BulkActionModal";
 import Loader from "../Loader/Loader";
 import Error from "../Error/Error";
 import NewToDoModal from "../NewToDoModal/NewToDoModal";
+import "./ToDoList.scss";
 
 const PAGE_LIMIT = 10;
 
@@ -198,8 +199,8 @@ const TodoList: React.FC = () => {
   }
 
   return (
-    <div>
-      <div>
+    <div className="todo-list">
+      <div className="todo-list__actions">
         <button onClick={handleCreateToDoButton}>Create new to-do</button>
         <button onClick={handleSelectAll}>
           {selectedToDos.length === toDos.length
@@ -224,7 +225,7 @@ const TodoList: React.FC = () => {
         next={loadToDos}
         hasMore={hasMore}
         loader={<Loader />}
-        endMessage={<p>No more todos.</p>}
+        endMessage={<p className="todo-list__end-message">No more todos.</p>}
       >
         {toDos.map((todo) => (
           <TodoItem

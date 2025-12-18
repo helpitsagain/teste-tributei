@@ -1,0 +1,56 @@
+@import './styles/variables';
+@import './styles/mixins';
+
+.App {
+  text-align: center;
+  min-height: 100vh;
+  padding: $spacing-lg;
+  
+  h1 {
+    color: $dark-bg;
+    margin-bottom: $spacing-lg;
+    font-size: 2.5rem;
+    text-align: center;
+    
+    @include responsive(mobile) {
+      font-size: 2rem;
+    }
+  }
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+  
+  @media (prefers-reduced-motion: no-preference) {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: $dark-bg;
+  min-height: 100vh;
+  @include flex-column;
+  @include flex-center;
+  font-size: calc(10px + 2vmin);
+  color: $white;
+}
+
+.App-link {
+  color: $primary-color;
+  text-decoration: none;
+  transition: opacity $transition-fast;
+  
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

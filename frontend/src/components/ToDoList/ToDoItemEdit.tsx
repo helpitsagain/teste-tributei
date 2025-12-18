@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ToDo } from "../../types/toDo";
+import "./ToDoItemEdit.scss";
 
 interface TodoItemEditProps {
   todo: ToDo;
@@ -20,24 +21,28 @@ const TodoItemEdit: React.FC<TodoItemEditProps> = ({
   };
 
   return (
-    <div>
-      <div>
-        <label>Title:</label>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
+    <div className="todo-item-edit">
+      <div className="todo-item-edit__form">
+        <div className="todo-item-edit__field">
+          <label>Title:</label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </div>
+        <div className="todo-item-edit__field">
+          <label>Description:</label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </div>
       </div>
-      <div>
-        <label>Description:</label>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
+      <div className="todo-item-edit__actions">
+        <button onClick={handleSave}>Save</button>
+        <button onClick={onCancel}>Cancel</button>
       </div>
-      <button onClick={handleSave}>Save</button>
-      <button onClick={onCancel}>Cancel</button>
     </div>
   );
 };

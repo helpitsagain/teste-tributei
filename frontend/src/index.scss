@@ -1,0 +1,18 @@
+@import './styles/variables';
+@import './styles/mixins';
+
+body {
+  margin: 0;
+  font-family: $font-family-base;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f5f5f5;
+}
+
+code {
+  font-family: $font-family-mono;
+}
+
+* {
+  box-sizing: border-box;
+}

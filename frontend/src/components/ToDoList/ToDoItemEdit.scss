@@ -1,0 +1,68 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.todo-item-edit {
+  padding: $spacing-md;
+  background-color: #f9f9f9;
+  border-radius: $border-radius-md;
+  margin-top: $spacing-sm;
+  
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+  
+  &__field {
+    display: flex;
+    flex-direction: column;
+    
+    label {
+      font-weight: 500;
+      margin-bottom: $spacing-xs;
+      color: $text-color;
+    }
+    
+    input,
+    textarea {
+      padding: $spacing-sm;
+      border: 1px solid $border-color;
+      border-radius: $border-radius-sm;
+      font-size: $font-size-base;
+      font-family: $font-family-base;
+      transition: border-color $transition-fast;
+      
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+      }
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+  }
+  
+  &__actions {
+    display: flex;
+    gap: $spacing-sm;
+    margin-top: $spacing-sm;
+    
+    @include responsive(mobile) {
+      flex-direction: column;
+    }
+    
+    button {
+      flex: 1;
+      
+      &:first-child {
+        @include button-success;
+      }
+      
+      &:last-child {
+        @include button-secondary;
+      }
+    }
+  }
+}

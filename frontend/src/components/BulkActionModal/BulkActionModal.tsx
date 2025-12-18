@@ -1,5 +1,6 @@
 import React from "react";
 import { ToDo } from "../../types/toDo";
+import "./BulkActionModal.scss";
 
 interface BulkActionModalProps {
   selectedIds: string[];
@@ -31,31 +32,11 @@ const BulkActionModal: React.FC<BulkActionModalProps> = ({
   };
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: "0",
-        left: "0",
-        width: "100%",
-        height: "100%",
-        backgroundColor: "rgba(0,0,0,0.5)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: "white",
-          padding: "20px",
-          borderRadius: "5px",
-          maxWidth: "500px",
-          width: "100%",
-        }}
-      >
-        <h2>Bulk Action</h2>
-        <p>You are about to update {selectedIds.length} items.</p>
-        <div>
+    <div className="modal-overlay">
+      <div className="bulk-action-modal">
+        <h2 className="bulk-action-modal__title">Bulk Action</h2>
+        <p className="bulk-action-modal__description">You are about to update {selectedIds.length} items.</p>
+        <div className="bulk-action-modal__preview">
           <h3>Preview:</h3>
           <ul>
             {selectedToDos.slice(0, 5).map((todo) => (
@@ -66,7 +47,7 @@ const BulkActionModal: React.FC<BulkActionModalProps> = ({
             )}
           </ul>
         </div>
-        <div>
+        <div className="bulk-action-modal__actions">
           <button onClick={handleCompleted}>Mark all as Completed</button>
           <button onClick={handlePending}>Mark all as Pending</button>
           <button onClick={handleDelete}>Delete items</button>

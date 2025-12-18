@@ -1,4 +1,5 @@
 import React from "react";
+import "./Error.scss";
 
 interface ErrorProps {
   message: string;
@@ -7,9 +8,10 @@ interface ErrorProps {
 
 const Error: React.FC<ErrorProps> = ({ message, onRetry }) => {
   return (
-    <div>
-      <p>{message}</p>
-      <button onClick={onRetry}>Retry</button>
+    <div className="error">
+      <div className="error__icon">⚠️</div>
+      <p className="error__message">{message}</p>
+      <button className="error__retry-button" onClick={onRetry}>Retry</button>
     </div>
   );
 };

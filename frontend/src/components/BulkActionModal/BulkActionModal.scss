@@ -1,0 +1,88 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.modal-overlay {
+  @include modal-overlay;
+}
+
+.bulk-action-modal {
+  @include modal-content;
+  
+  &__title {
+    margin-top: 0;
+    margin-bottom: $spacing-md;
+    color: $dark-bg;
+    font-size: $font-size-xl;
+  }
+  
+  &__description {
+    margin-bottom: $spacing-md;
+    color: $text-color;
+  }
+  
+  &__preview {
+    margin-bottom: $spacing-lg;
+    
+    h3 {
+      margin-top: 0;
+      margin-bottom: $spacing-sm;
+      color: $text-color;
+      font-size: $font-size-lg;
+    }
+    
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      background-color: #f9f9f9;
+      border-radius: $border-radius-sm;
+      padding: $spacing-md;
+      max-height: 200px;
+      overflow-y: auto;
+      
+      li {
+        padding: $spacing-xs 0;
+        border-bottom: 1px solid $border-color;
+        
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+    }
+  }
+  
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+    
+    @include responsive(mobile) {
+      flex-direction: column;
+    }
+    
+    button {
+      flex: 1;
+      min-width: 120px;
+      
+      @include responsive(mobile) {
+        width: 100%;
+      }
+      
+      &:nth-child(1) {
+        @include button-success;
+      }
+      
+      &:nth-child(2) {
+        @include button-warning;
+      }
+      
+      &:nth-child(3) {
+        @include button-danger;
+      }
+      
+      &:nth-child(4) {
+        @include button-secondary;
+      }
+    }
+  }
+}
