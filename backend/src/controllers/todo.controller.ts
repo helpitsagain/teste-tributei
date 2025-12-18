@@ -11,7 +11,7 @@ export const getToDos = (req: Request, res: Response) => {
 };
 
 export const updateToDo = (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+  const id = req.params.id;
   const updatedToDo = req.body;
 
   const todo = toDoService.updateToDo(id, updatedToDo);

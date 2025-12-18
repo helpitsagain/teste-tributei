@@ -7,7 +7,11 @@ export const getToDosPaginated = (page: number, limit: number) => {
   const toDos = getToDos();
   const total = toDos.length;
 
-  const paginatedToDos = toDos.slice(startIndex, endIndex);
+  const uniqueToDos = Array.from(
+    new Map(toDos.map((item) => [item.id, item])).values(),
+  );
+
+  const paginatedToDos = uniqueToDos.slice(startIndex, endIndex);
 
   return {
     toDos: paginatedToDos,
@@ -17,7 +21,7 @@ export const getToDosPaginated = (page: number, limit: number) => {
   };
 };
 
-export const updateToDo = (id: number, updatedToDo: Partial<ToDo>) => {
+export const updateToDo = (id: string, updatedToDo: Partial<ToDo>) => {
   const toDos = getToDos();
   const index = toDos.findIndex((toDo) => toDo.id === id);
 
@@ -31,7 +35,7 @@ export const updateToDo = (id: number, updatedToDo: Partial<ToDo>) => {
   return toDos[index];
 };
 
-export const bulkUpdateToDos = (ids: number[], updates: Partial<ToDo>) => {
+export const bulkUpdateToDos = (ids: string[], updates: Partial<ToDo>) => {
   const toDos = getToDos();
   const updatedToDos: ToDo[] = [];
 
