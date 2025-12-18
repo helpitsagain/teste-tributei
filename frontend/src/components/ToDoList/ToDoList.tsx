@@ -6,12 +6,14 @@ import {
   getToDos,
   updateToDo,
   bulkDeleteToDos,
+  createToDo,
 } from "../../services/toDoService";
 import TodoItem from "./ToDoItem";
 import BulkActionModal from "../BulkActionModal/BulkActionModal";
 import Loader from "../Loader/Loader";
 import Error from "../Error/Error";
 import NewToDoModal from "../NewToDoModal/NewToDoModal";
+import "./ToDoList.scss";
 
 const PAGE_LIMIT = 10;
 
@@ -48,10 +50,14 @@ const TodoList: React.FC = () => {
       setPage(response.page + 1);
 
       setHasMore(response.page < response.totalPages);
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
 
-      setError("Failed to load todos. Please try again.");
+      if (e.response?.data.error) {
+        setError(e.response.data.error);
+      } else {
+        setError("Failed to load todos. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -95,10 +101,11 @@ const TodoList: React.FC = () => {
 
       setIsBulkModalOpen(false);
       setSelectedToDos([]);
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
 
-      setError("Failed to update to-dos.");
+      // setError("Failed to update to-dos.");
+      setError(e.response.data.error);
     }
   };
 
@@ -106,8 +113,13 @@ const TodoList: React.FC = () => {
     try {
       await bulkDeleteToDos(selectedToDos);
 
+      type ToDoReduce = {
+        remainingToDos: ToDo[];
+        deletedToDos: ToDo[];
+      };
+
       const { remainingToDos } = toDos.reduce(
-        (acc, toDo) => {
+        (acc: ToDoReduce, toDo: ToDo) => {
           if (ids.includes(toDo.id)) {
             acc.deletedToDos.push(toDo);
           } else {
@@ -115,10 +127,7 @@ const TodoList: React.FC = () => {
           }
           return acc;
         },
-        { remainingToDos: [], deletedToDos: [] } as {
-          remainingToDos: ToDo[];
-          deletedToDos: ToDo[];
-        },
+        { remainingToDos: [], deletedToDos: [] } as ToDoReduce,
       );
 
       setToDos((prev) => prev.filter((toDo) => !ids.includes(toDo.id)));
@@ -130,22 +139,22 @@ const TodoList: React.FC = () => {
         setPage(1);
         setIsListEmpty(true);
       }
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
 
-      setError("Failed to delete to-dos.");
+      // setError("Failed to delete to-dos.");
+      setError(e.response.data.error);
     }
   };
 
-  // TODO: implementar form para novo to-do
-  const handleNewToDo = async (newToDo: Partial<ToDo>) => {
+  const handleCreateToDo = async (newToDo: Partial<ToDo>) => {
     try {
-      console.log(newToDo);
-      // await createNewToDo(newToDo)
-    } catch (e) {
+      await createToDo(newToDo);
+    } catch (e: any) {
       console.log(e);
 
-      setError("Failed to create to-do");
+      // setError("Failed to create to-do");
+      setError(e.response.data.error);
     }
   };
 
@@ -155,10 +164,11 @@ const TodoList: React.FC = () => {
       setToDos((prev) =>
         prev.map((todo) => (todo.id === updatedToDo.id ? updatedToDo : todo)),
       );
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
 
-      setError("Failed to update to-do.");
+      // setError("Failed to update to-do.");
+      setError(e.response.data.error);
     }
   };
 
@@ -198,8 +208,8 @@ const TodoList: React.FC = () => {
   }
 
   return (
-    <div>
-      <div>
+    <div className="todo-list">
+      <div className="todo-list__actions">
         <button onClick={handleCreateToDoButton}>Create new to-do</button>
         <button onClick={handleSelectAll}>
           {selectedToDos.length === toDos.length
@@ -224,7 +234,7 @@ const TodoList: React.FC = () => {
         next={loadToDos}
         hasMore={hasMore}
         loader={<Loader />}
-        endMessage={<p>No more todos.</p>}
+        endMessage={<p className="todo-list__end-message">No more todos.</p>}
       >
         {toDos.map((todo) => (
           <TodoItem
@@ -239,9 +249,12 @@ const TodoList: React.FC = () => {
 
       {isNewToDoModalOpen && (
         <NewToDoModal
-          newToDo={{ title: "aaaaaaaa" }}
-          onConfirm={handleNewToDo}
-          onCancel={() => setIsNewToDoModalOpen(false)}
+          onConfirm={handleCreateToDo}
+          onCancel={() => {
+            setError(null);
+            setIsNewToDoModalOpen(false);
+          }}
+          error={error}
         />
       )}
 

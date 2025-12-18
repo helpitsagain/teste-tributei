@@ -1,51 +1,56 @@
-import React from "react";
+import React, { useState } from "react";
 import { ToDo } from "../../types/toDo";
+import Error from "../Error/Error";
+import "./NewToDoModal.scss";
 
 interface NewToDoModalProps {
-  newToDo: Partial<ToDo>;
   onConfirm: (newToDo: Partial<ToDo>) => void;
   onCancel: () => void;
+  error?: any;
 }
 
 const NewToDoModal: React.FC<NewToDoModalProps> = ({
-  newToDo,
   onConfirm,
   onCancel,
+  error,
 }) => {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
   const handleCreate = () => {
-    onConfirm(newToDo);
+    onConfirm({ title, description });
   };
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: "0",
-        left: "0",
-        width: "100%",
-        height: "100%",
-        backgroundColor: "rgba(0,0,0,0.5)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: "white",
-          padding: "20px",
-          borderRadius: "5px",
-          maxWidth: "500px",
-          width: "100%",
-        }}
-      >
-        <h2>Create new to-do</h2>
-        <div>include form for new to-do</div>
-        <br />
-        <div>
+    <div className="modal-overlay">
+      <div className="new-todo-modal">
+        <h2 className="new-todo-modal__title">Create new to-do</h2>
+        <div className="new-todo-modal__content">
+          <div className="todo-item-edit">
+            <div className="todo-item-edit__form">
+              <div className="todo-item-edit__field">
+                <label>Title:</label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+              </div>
+              <div className="todo-item-edit__field">
+                <label>Description:</label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="new-todo-modal__actions">
           <button onClick={handleCreate}>Create</button>
           <button onClick={onCancel}>Cancel</button>
         </div>
+        {!!error && <Error message={error} />}
       </div>
     </div>
   );

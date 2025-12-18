@@ -1,0 +1,47 @@
+@import "../../styles/variables";
+@import "../../styles/mixins";
+
+.modal-overlay {
+  @include modal-overlay;
+}
+
+.new-todo-modal {
+  @include modal-content;
+
+  &__title {
+    margin-top: 0;
+    margin-bottom: $spacing-md;
+    color: $dark-bg;
+    font-size: $font-size-xl;
+  }
+
+  &__content {
+    margin-bottom: $spacing-lg;
+    padding: $spacing-md;
+    background-color: #f9f9f9;
+    border-radius: $border-radius-sm;
+    text-align: center;
+    color: $text-color;
+  }
+
+  &__actions {
+    display: flex;
+    gap: $spacing-sm;
+
+    @include responsive(mobile) {
+      flex-direction: column;
+    }
+
+    button {
+      flex: 1;
+
+      &:first-child {
+        @include button-primary;
+      }
+
+      &:last-child {
+        @include button-secondary;
+      }
+    }
+  }
+}

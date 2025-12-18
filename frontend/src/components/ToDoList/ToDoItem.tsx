@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ToDo } from "../../types/toDo";
 import TodoItemEdit from "./ToDoItemEdit";
+import "./ToDoItem.scss";
 
 interface TodoItemProps {
   todo: ToDo;
@@ -17,7 +18,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
 
-  const handleToggleComplete = () => {
+  const handleToggleStatus = () => {
     onUpdate({ ...todo, completed: !todo.completed });
   };
 
@@ -27,18 +28,26 @@ const TodoItem: React.FC<TodoItemProps> = ({
   };
 
   return (
-    <div style={{ border: "1px solid #ccc", margin: "10px", padding: "10px" }}>
-      <div>
-        <input
-          type="checkbox"
-          checked={isSelected}
-          onChange={() => onSelect(todo.id)}
-        />
-        <span>ID: {todo.id}</span>
-        <button onClick={() => setIsEditing(!isEditing)}>Edit</button>
-        <button onClick={handleToggleComplete}>
-          Mark as {todo.completed ? "Incomplete" : "Completed"}
-        </button>
+    <div className={`todo-item ${isSelected ? "todo-item--selected" : ""}`}>
+      <div className="todo-item__header">
+        <div className="todo-item__left">
+          <input
+            type="checkbox"
+            checked={isSelected}
+            onChange={() => onSelect(todo.id)}
+          />
+          <button
+            className={`toggle-status ${!!todo.completed && "pending"}`}
+            onClick={handleToggleStatus}
+          >
+            Mark as {todo.completed ? "Pending" : "Completed"}
+          </button>
+        </div>
+        <div className="todo-item__left__actions">
+          <button className="edit" onClick={() => setIsEditing(!isEditing)}>
+            Edit
+          </button>
+        </div>
       </div>
       {isEditing ? (
         <TodoItemEdit
@@ -47,10 +56,19 @@ const TodoItem: React.FC<TodoItemProps> = ({
           onCancel={() => setIsEditing(false)}
         />
       ) : (
-        <div>
+        <div
+          className="todo-item__content"
+          onClick={() => {
+            onSelect(todo.id);
+          }}
+        >
           <h3>{todo.title}</h3>
           <p>{todo.description}</p>
-          <p>Status: {todo.completed ? "Completed" : "Pending"}</p>
+          <p
+            className={`status ${todo.completed ? "status--completed" : "status--pending"}`}
+          >
+            Status: {todo.completed ? "Completed" : "Pending"}
+          </p>
         </div>
       )}
     </div>

@@ -1,0 +1,105 @@
+@import "../../styles/variables";
+@import "../../styles/mixins";
+
+.todo-item {
+  @include card;
+  margin: $spacing-md 0;
+
+  &__header {
+    @include flex-between;
+    margin-bottom: $spacing-sm;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+
+    @include responsive(mobile) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    button {
+      @include button-base;
+      padding: $spacing-xs $spacing-sm;
+      font-size: $font-size-sm;
+
+      background-color: $success-color;
+      color: $white;
+
+      &.pending {
+        background-color: $warning-color;
+      }
+    }
+
+    &__actions {
+      display: flex;
+      gap: $spacing-xs;
+
+      @include responsive(mobile) {
+        width: 100%;
+
+        button {
+          flex: 1;
+        }
+      }
+
+      button {
+        @include button-base;
+        padding: $spacing-xs $spacing-sm;
+        font-size: $font-size-sm;
+
+        background-color: $light-gray;
+        color: $text-color;
+      }
+    }
+  }
+
+  &__content {
+    background-color: $lighter-gray;
+    padding: $spacing-xs;
+    border-radius: $border-radius-lg;
+
+    h3 {
+      margin: $spacing-sm 0;
+      color: $dark-bg;
+      font-size: $font-size-lg;
+    }
+
+    p {
+      margin: $spacing-xs 0;
+      color: $text-color;
+      line-height: 1.5;
+    }
+
+    .status {
+      font-weight: 500;
+
+      &--completed {
+        color: $success-color;
+      }
+
+      &--pending {
+        color: $warning-color;
+      }
+    }
+
+    &:hover {
+      background-color: #f3f3f3;
+    }
+  }
+
+  &--selected {
+    border-color: $primary-color;
+    box-shadow: 0 4px 12px rgba(97, 218, 251, 0.3);
+  }
+}
