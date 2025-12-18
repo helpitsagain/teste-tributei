@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { ToDo } from "../../types/toDo";
-import { getToDos } from "../../services/toDoService";
+import {
+  bulkUpdateToDos,
+  getToDos,
+  updateToDo,
+} from "../../services/toDoService";
 import TodoItem from "./ToDoItem";
 import BulkActionModal from "../BulkActionModal/BulkActionModal";
 import Loader from "../Loader/Loader";
@@ -63,22 +67,33 @@ const TodoList: React.FC = () => {
   };
 
   const handleBulkConfirm = async (updates: Partial<ToDo>) => {
-    // Chamar a API para atualização em massa
-    // Depois fechar o modal e atualizar a lista
-    // Por simplicidade, vamos apenas atualizar o estado local
-    setToDos((prev) =>
-      prev.map((todo) =>
-        selectedToDos.includes(todo.id) ? { ...todo, ...updates } : todo,
-      ),
-    );
-    setSelectedToDos([]);
-    setIsBulkModalOpen(false);
+    try {
+      await bulkUpdateToDos(selectedToDos, updates);
+
+      setToDos((prev) =>
+        prev.map((toDo) =>
+          selectedToDos.includes(toDo.id) ? { ...toDo, ...updates } : toDo,
+        ),
+      );
+
+      setIsBulkModalOpen(false);
+    } catch (e) {
+      console.log(e);
+      setError("Failed to update to-dos.");
+    }
   };
 
-  const handleUpdateTodo = (updatedTodo: ToDo) => {
-    setToDos((prev) =>
-      prev.map((todo) => (todo.id === updatedTodo.id ? updatedTodo : todo)),
-    );
+  const handleUpdateTodo = async (updatedToDo: ToDo) => {
+    try {
+      console.log("updatedTodo", updatedToDo);
+      await updateToDo(updatedToDo.id, updatedToDo);
+      setToDos((prev) =>
+        prev.map((todo) => (todo.id === updatedToDo.id ? updatedToDo : todo)),
+      );
+    } catch (e) {
+      console.log(e);
+      setError("Failed to update to-do.");
+    }
   };
 
   // LIFECYCLE HOOOKS

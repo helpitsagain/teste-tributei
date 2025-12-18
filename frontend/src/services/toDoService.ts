@@ -14,7 +14,7 @@ export const updateToDo = async (
   id: number,
   updatedToDo: Partial<ToDo>,
 ): Promise<ToDo> => {
-  const res = await api.put(`/api/${id}`, updatedToDo);
+  const res = await api.put(`/item/${id}`, updatedToDo);
   return res.data;
 };
 
@@ -22,6 +22,6 @@ export const bulkUpdateToDos = async (
   ids: number[],
   updates: Partial<ToDo>,
 ): Promise<{ updatedToDos: ToDo[] }> => {
-  const res = await api.put("/api/bulk", { ids, updates });
+  const res = await api.put("/bulk", { ids, updates });
   return res.data;
 };
