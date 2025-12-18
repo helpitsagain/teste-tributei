@@ -10,7 +10,7 @@ export const getToDos = async (
 };
 
 export const updateToDo = async (
-  id: number,
+  id: string,
   updatedToDo: Partial<ToDo>,
 ): Promise<ToDo> => {
   const res = await api.put(`/item/${id}`, updatedToDo);
@@ -18,7 +18,7 @@ export const updateToDo = async (
 };
 
 export const bulkUpdateToDos = async (
-  ids: number[],
+  ids: string[],
   updates: Partial<ToDo>,
 ): Promise<{ updatedToDos: ToDo[] }> => {
   const res = await api.put("/bulk", { ids, updates });
@@ -33,5 +33,12 @@ export const createToDo = async (newToDo: ToDo): Promise<ToDo> => {
 
 export const deleteToDo = async (id: string): Promise<ToDo> => {
   const res = await api.delete(`item/delete/${id}`);
+  return res.data;
+};
+
+export const bulkDeleteToDos = async (
+  ids: string[],
+): Promise<{ deletedToDos: ToDo[] }> => {
+  const res = await api.delete("/bulk/delete", { data: { ids } });
   return res.data;
 };

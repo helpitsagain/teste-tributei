@@ -2,9 +2,10 @@ import React from "react";
 import { ToDo } from "../../types/toDo";
 
 interface BulkActionModalProps {
-  selectedIds: number[];
+  selectedIds: string[];
   todos: ToDo[];
   onConfirm: (updates: Partial<ToDo>) => void;
+  onDelete: (ids: string[]) => void;
   onCancel: () => void;
 }
 
@@ -12,12 +13,21 @@ const BulkActionModal: React.FC<BulkActionModalProps> = ({
   selectedIds,
   todos,
   onConfirm,
+  onDelete,
   onCancel,
 }) => {
-  const selectedTodos = todos.filter((todo) => selectedIds.includes(todo.id));
+  const selectedToDos = todos.filter((todo) => selectedIds.includes(todo.id));
 
-  const handleConfirm = () => {
-    onConfirm({ completed: true }); // Exemplo: marcar como concluído
+  const handleCompleted = () => {
+    onConfirm({ completed: true });
+  };
+
+  const handlePending = () => {
+    onConfirm({ completed: false });
+  };
+
+  const handleDelete = () => {
+    onDelete(selectedIds);
   };
 
   return (
@@ -48,16 +58,18 @@ const BulkActionModal: React.FC<BulkActionModalProps> = ({
         <div>
           <h3>Preview:</h3>
           <ul>
-            {selectedTodos.slice(0, 5).map((todo) => (
+            {selectedToDos.slice(0, 5).map((todo) => (
               <li key={todo.id}>{todo.title}</li>
             ))}
-            {selectedTodos.length > 5 && (
-              <li>...and {selectedTodos.length - 5} more</li>
+            {selectedToDos.length > 5 && (
+              <li>...and {selectedToDos.length - 5} more</li>
             )}
           </ul>
         </div>
         <div>
-          <button onClick={handleConfirm}>Confirm (Mark as Completed)</button>
+          <button onClick={handleCompleted}>Mark all as Completed</button>
+          <button onClick={handlePending}>Mark all as Pending</button>
+          <button onClick={handleDelete}>Delete items</button>
           <button onClick={onCancel}>Cancel</button>
         </div>
       </div>

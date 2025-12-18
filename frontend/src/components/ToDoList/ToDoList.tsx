@@ -5,11 +5,15 @@ import {
   bulkUpdateToDos,
   getToDos,
   updateToDo,
+  bulkDeleteToDos,
 } from "../../services/toDoService";
 import TodoItem from "./ToDoItem";
 import BulkActionModal from "../BulkActionModal/BulkActionModal";
 import Loader from "../Loader/Loader";
 import Error from "../Error/Error";
+import NewToDoModal from "../NewToDoModal/NewToDoModal";
+
+const PAGE_LIMIT = 10;
 
 const TodoList: React.FC = () => {
   const [toDos, setToDos] = useState<ToDo[]>([]);
@@ -17,8 +21,9 @@ const TodoList: React.FC = () => {
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedToDos, setSelectedToDos] = useState<number[]>([]);
+  const [selectedToDos, setSelectedToDos] = useState<string[]>([]);
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
+  const [isNewToDoModalOpen, setIsNewToDoModalOpen] = useState(false);
 
   const initialLoadRef = useRef(false);
 
@@ -27,7 +32,7 @@ const TodoList: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await getToDos(page, 10);
+      const response = await getToDos(page, PAGE_LIMIT);
 
       setToDos((prev) => [...prev, ...response.toDos]);
 
@@ -43,12 +48,16 @@ const TodoList: React.FC = () => {
     }
   }, [page, loading]);
 
-  const handleSelectTodo = (id: number) => {
+  const handleSelectTodo = (id: string) => {
     setSelectedToDos((prev) =>
       prev.includes(id)
         ? prev.filter((todoId) => todoId !== id)
         : [...prev, id],
     );
+  };
+
+  const handleCreateToDoButton = () => {
+    setIsNewToDoModalOpen(true);
   };
 
   const handleSelectAll = () => {
@@ -59,7 +68,7 @@ const TodoList: React.FC = () => {
     }
   };
 
-  const handleBulkAction = () => {
+  const handleBulkActionButton = () => {
     if (selectedToDos.length > 0) {
       setIsBulkModalOpen(true);
     }
@@ -80,6 +89,35 @@ const TodoList: React.FC = () => {
       console.log(e);
 
       setError("Failed to update to-dos.");
+    }
+  };
+
+  const handleBulkDelete = async (ids: string[]) => {
+    try {
+      await bulkDeleteToDos(selectedToDos);
+
+      setToDos((prev) => prev.filter((toDo) => !ids.includes(toDo.id)));
+
+      setIsBulkModalOpen(false);
+
+      if (toDos.length === 0) {
+        getToDos(page, PAGE_LIMIT);
+      }
+    } catch (e) {
+      console.log("Error:", e);
+
+      setError("Failed to delete to-dos.");
+    }
+  };
+
+  const handleNewToDo = async (newToDo: Partial<ToDo>) => {
+    try {
+      console.log(newToDo);
+      // await createNewToDo(newToDo)
+    } catch (e) {
+      console.log(e);
+
+      setError("Failed to create to-do");
     }
   };
 
@@ -127,16 +165,17 @@ const TodoList: React.FC = () => {
   return (
     <div>
       <div>
+        <button onClick={handleCreateToDoButton}>Create new to-do</button>
         <button onClick={handleSelectAll}>
           {selectedToDos.length === toDos.length
             ? "Deselect All"
             : "Select All"}
         </button>
         <button
-          onClick={handleBulkAction}
+          onClick={handleBulkActionButton}
           disabled={selectedToDos.length === 0}
         >
-          Bulk Action (Mark as Completed)
+          Bulk Actions
         </button>
       </div>
 
@@ -158,11 +197,20 @@ const TodoList: React.FC = () => {
         ))}
       </InfiniteScroll>
 
+      {isNewToDoModalOpen && (
+        <NewToDoModal
+          newToDo={{ title: "aaaaaaaa" }}
+          onConfirm={handleNewToDo}
+          onCancel={() => setIsNewToDoModalOpen(false)}
+        />
+      )}
+
       {isBulkModalOpen && (
         <BulkActionModal
           selectedIds={selectedToDos}
           todos={toDos}
           onConfirm={handleBulkConfirm}
+          onDelete={handleBulkDelete}
           onCancel={() => setIsBulkModalOpen(false)}
         />
       )}

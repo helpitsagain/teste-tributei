@@ -5,7 +5,7 @@ import TodoItemEdit from "./ToDoItemEdit";
 interface TodoItemProps {
   todo: ToDo;
   isSelected: boolean;
-  onSelect: (id: number) => void;
+  onSelect: (id: string) => void;
   onUpdate: (todo: ToDo) => void;
 }
 
