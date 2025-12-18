@@ -1,6 +1,6 @@
 node_modules
+package-lock.json
 dist
 .vscode
 .env
 backend/data/data.json
-frontend/node_modules
