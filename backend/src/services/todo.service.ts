@@ -53,6 +53,29 @@ export const bulkUpdateToDos = (ids: string[], updates: Partial<ToDo>) => {
   return updatedToDos;
 };
 
+export const bulkDeleteToDos = (ids: string[]) => {
+  const toDos = getToDos();
+
+  const { remainingToDos, deletedToDos } = toDos.reduce(
+    (acc, toDo) => {
+      if (ids.includes(toDo.id)) {
+        acc.deletedToDos.push(toDo);
+      } else {
+        acc.remainingToDos.push(toDo);
+      }
+      return acc;
+    },
+    { remainingToDos: [], deletedToDos: [] } as {
+      remainingToDos: ToDo[];
+      deletedToDos: ToDo[];
+    },
+  );
+
+  setToDos(remainingToDos);
+
+  return deletedToDos;
+};
+
 export const createToDo = (title: string, description: string) => {
   const toDos = getToDos();
 
