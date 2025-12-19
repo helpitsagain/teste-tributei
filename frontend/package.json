@@ -19,7 +19,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "vite",
+    "start": "vite --mode production",
+    "dev": "vite --mode development",
     "build": "vite build"
   },
   "eslintConfig": {
