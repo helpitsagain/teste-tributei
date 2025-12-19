@@ -25,8 +25,8 @@ export const bulkUpdateToDos = async (
   return res.data;
 };
 
-export const createToDo = async (newToDo: ToDo): Promise<ToDo> => {
-  const res = await api.post("/item/new", { newToDo });
+export const createToDo = async (newToDo: Partial<ToDo>): Promise<ToDo> => {
+  const res = await api.post("/item/new", newToDo);
   return res.data;
 };
 
