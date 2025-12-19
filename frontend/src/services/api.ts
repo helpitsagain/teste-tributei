@@ -1,7 +1,9 @@
 import axios from "axios";
 
+const BASE_URL = "https://teste-tributei-backend.vercel.app/api";
+
 const api = axios.create({
-  baseURL: "http://localhost:3001/api",
+  baseURL: BASE_URL,
 });
 
 export default api;
