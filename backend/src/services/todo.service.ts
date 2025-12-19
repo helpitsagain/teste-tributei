@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { ToDo, getToDos, setToDos } from "../models/todo.model";
+import { ToDo, getToDos, setToDos } from "../models/todo.model.js";
 
 export const getToDosPaginated = (page: number, limit: number) => {
   const startIndex = (page - 1) * limit;

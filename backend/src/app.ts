@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import toDoRoutes from "./routes/todo.routes";
+import toDoRoutes from "./routes/todo.routes.js";
 
 const app = express();
 

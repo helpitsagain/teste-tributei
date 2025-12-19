@@ -1,4 +1,4 @@
-import { ToDo } from "./todo.model";
+import { ToDo } from "./todo.model.js";
 
 export interface CreateToDoRequest {
   title: string;

@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import * as toDoService from "../services/todo.service";
+import * as toDoService from "../services/todo.service.js";
 import {
   BulkDeleteRequest,
   BulkUpdateRequest,
   CreateToDoRequest,
-} from "../models/requests.model";
+} from "../models/requests.model.js";
 
 export const getToDos = (req: Request, res: Response) => {
   try {
