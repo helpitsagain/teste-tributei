@@ -33,24 +33,6 @@ app.get("/swagger.json", (req, res) => {
 });
 
 // Rota de teste
-/**
- * @swagger
- * /:
- *   get:
- *     summary: Verifica se a API está funcionando
- *     tags:  [Health]
- *     responses:
- *       200:
- *         description: API funcionando corretamente
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type:  string
- *                   example:  API funcionando!
- */
 app.get("/", (req, res) => {
   res.json({ message: "API funcionando!" });
 });
