@@ -43,11 +43,11 @@ export const updateToDo = (req: Request, res: Response) => {
   }
 };
 
-export const bulkUpdateTodos = (req: Request, res: Response) => {
+export const bulkUpdateToDos = (req: Request, res: Response) => {
   try {
     const { ids, updates }: BulkUpdateRequest = req.body;
 
-    if (!Array.isArray(ids) || !updates) {
+    if (!Array.isArray(ids)) {
       return res
         .status(400)
         .json({ message: "ids must be an array and updates must be provided" });
@@ -65,7 +65,7 @@ export const bulkUpdateTodos = (req: Request, res: Response) => {
   }
 };
 
-export const bulkDeleteTodos = (req: Request, res: Response) => {
+export const bulkDeleteToDos = (req: Request, res: Response) => {
   try {
     const { ids }: BulkDeleteRequest = req.body;
 
