@@ -33,11 +33,13 @@
       padding: $spacing-xs $spacing-sm;
       font-size: $font-size-sm;
 
-      background-color: $success-color;
-      color: $white;
+      // background-color: $success-color;
+      outline: 1px solid $success-color;
+      color: $text-color;
 
       &.pending {
-        background-color: $warning-color;
+        // background-color: $warning-color;
+        outline: 1px solid $warning-color;
       }
     }
 
@@ -58,7 +60,7 @@
         padding: $spacing-xs $spacing-sm;
         font-size: $font-size-sm;
 
-        background-color: $light-gray;
+        // background-color: $light-gray;
         color: $text-color;
       }
     }
