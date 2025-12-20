@@ -59,18 +59,6 @@ const BulkActionModal: React.FC<BulkActionModalProps> = ({
     }
   };
 
-  const handleCompleted = () => {
-    onConfirm({ completed: true });
-  };
-
-  const handlePending = () => {
-    onConfirm({ completed: false });
-  };
-
-  const handleDelete = () => {
-    onDelete(selectedIds);
-  };
-
   return (
     <div className="modal-overlay">
       <div className="bulk-action-modal">
