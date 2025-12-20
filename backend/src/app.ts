@@ -1,8 +1,9 @@
-import express from "express";
 import cors from "cors";
+import express from "express";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./config/swagger.js";
 import toDoRoutes from "./routes/todo.routes.js";
+import { populateDatabase } from "./services/todo.service.js";
 
 const app = express();
 
@@ -39,5 +40,9 @@ app.get("/", (req, res) => {
 
 // Rota principal
 app.use("/api", toDoRoutes);
+
+// Popula a base de dados se não tiver itens o suficiente.
+// WARN: Deletar antes de subir para produção.
+await populateDatabase();
 
 export default app;

@@ -6,44 +6,45 @@ import {
   CreateToDoRequest,
 } from "../models/requests.model.js";
 
-export const getToDos = (req: Request, res: Response) => {
+export const getToDos = async (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
 
-    const result = toDoService.getToDosPaginated(page, limit);
+    const result = await toDoService.getToDosPaginated(page, limit);
 
     res.json(result);
   } catch (e) {
-    console.log(e);
+    console.error(e);
 
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-export const updateToDo = (req: Request, res: Response) => {
+export const updateToDo = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
     const updatedToDo = req.body;
 
-    const toDo = toDoService.updateToDo(id, updatedToDo);
+    const toDo = await toDoService.updateToDo(id, updatedToDo);
 
     if (!toDo) {
-      console.log("to-do not found");
-      return res.status(404).json({ message: "To-do not found" });
+      const message = `ID '${id}' not found.`;
+      console.error(message);
+      return res.status(404).json({ message });
     }
 
-    console.log("update!");
+    console.info(`Updated to-do '${id}'`);
 
     res.json(toDo);
   } catch (e) {
-    console.log(e);
+    console.error(e);
 
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-export const bulkUpdateToDos = (req: Request, res: Response) => {
+export const bulkUpdateToDos = async (req: Request, res: Response) => {
   try {
     const { ids, updates }: BulkUpdateRequest = req.body;
 
@@ -53,19 +54,19 @@ export const bulkUpdateToDos = (req: Request, res: Response) => {
         .json({ message: "ids must be an array and updates must be provided" });
     }
 
-    const updatedTodos = toDoService.bulkUpdateToDos(ids, updates);
+    const updatedToDos = await toDoService.bulkUpdateToDos(ids, updates);
 
-    console.log("bulk update!");
+    console.info(`Updated ${updatedToDos.length} to-dos.`);
 
-    res.json({ updatedTodos });
+    res.json({ updatedTodos: updatedToDos });
   } catch (e) {
-    console.log(e);
+    console.error(e);
 
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-export const bulkDeleteToDos = (req: Request, res: Response) => {
+export const bulkDeleteToDos = async (req: Request, res: Response) => {
   try {
     const { ids }: BulkDeleteRequest = req.body;
 
@@ -75,19 +76,19 @@ export const bulkDeleteToDos = (req: Request, res: Response) => {
         .json({ message: "ids must be an array and must be provided" });
     }
 
-    const updatedTodos = toDoService.bulkDeleteToDos(ids);
+    const updatedTodos = await toDoService.bulkDeleteToDos(ids);
 
     console.log("bulk delete!");
 
     res.json({ updatedTodos });
   } catch (e) {
-    console.log(e);
+    console.error(e);
 
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-export const createToDo = (req: Request, res: Response) => {
+export const createToDo = async (req: Request, res: Response) => {
   try {
     const { title, description }: CreateToDoRequest = req.body;
 
@@ -95,30 +96,30 @@ export const createToDo = (req: Request, res: Response) => {
       return res.status(400).json({ error: "Title is required." });
     }
 
-    const newToDo = toDoService.createToDo(title, description);
+    const newToDo = await toDoService.createToDo(title, description);
 
     res.json({ newToDo });
   } catch (e) {
-    console.log(e);
+    console.error(e);
 
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-export const deleteToDo = (req: Request, res: Response) => {
+export const deleteToDo = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
 
-    const toDo = toDoService.deleteToDo(id);
+    const toDo = await toDoService.deleteToDo(id);
 
     if (!toDo) {
-      console.log("to-do not found");
+      console.error("to-do not found");
       return res.status(404).json({ message: "To-do not found." });
     }
 
     res.json(toDo);
   } catch (e) {
-    console.log(e);
+    console.error(e);
 
     res.status(500).json({ message: "Internal Server Error" });
   }

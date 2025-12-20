@@ -1,110 +1,79 @@
-import { v4 as uuidv4 } from "uuid";
-import { ToDo, getToDos, setToDos } from "../models/todo.model.js";
+import { ToDo } from "../models/todo.model.js";
+import * as sql from "../repositories/sql.js";
 
-export const getToDosPaginated = (page: number, limit: number) => {
-  const startIndex = (page - 1) * limit;
-  const endIndex = page * limit;
-
-  const toDos = getToDos();
-  const total = toDos.length;
-
-  const uniqueToDos = Array.from(
-    new Map(toDos.map((item) => [item.id, item])).values(),
-  );
-
-  const paginatedToDos = uniqueToDos.slice(startIndex, endIndex);
-
-  return {
-    toDos: paginatedToDos,
-    total,
-    page,
-    totalPages: Math.ceil(total / limit),
-  };
+export const getToDosPaginated = async (page: number, limit: number) => {
+  try {
+    const result = await sql.getToDosPaginated(page, limit);
+    return result;
+  } catch (e) {
+    console.error("Service error (getToDosPaginated):", e);
+    return { toDos: [], total: 0, page, totalPages: 0 };
+  }
 };
 
-export const updateToDo = (id: string, updatedToDo: Partial<ToDo>) => {
-  const toDos = getToDos();
-  const index = toDos.findIndex((toDo) => toDo.id === id);
-
-  if (index === -1) {
+export const updateToDo = async (id: string, updatedToDo: Partial<ToDo>) => {
+  try {
+    const updated = await sql.updateToDo(id, updatedToDo as any);
+    return updated;
+  } catch (e) {
+    console.error("Service error (updateToDo):", e);
     return null;
   }
-
-  toDos[index] = { ...toDos[index], ...updatedToDo };
-  setToDos(toDos);
-
-  return toDos[index];
 };
 
-export const bulkUpdateToDos = (ids: string[], updates: Partial<ToDo>) => {
-  const toDos = getToDos();
-  const updatedToDos: ToDo[] = [];
+export const bulkUpdateToDos = async (
+  ids: string[],
+  updates: Partial<ToDo>,
+) => {
+  try {
+    const updated = await sql.bulkUpdateToDos(ids, updates as any);
+    return updated;
+  } catch (e) {
+    console.error("Service error (bulkUpdateToDos):", e);
+    return [];
+  }
+};
 
-  ids.forEach((id) => {
-    const index = toDos.findIndex((toDo) => toDo.id === id);
-    if (index !== -1) {
-      toDos[index] = { ...toDos[index], ...updates };
-      updatedToDos.push(toDos[index]);
+export const bulkDeleteToDos = async (ids: string[]) => {
+  try {
+    const deleted = await sql.bulkDeleteToDos(ids);
+    return deleted;
+  } catch (e) {
+    console.error("Service error (bulkDeleteToDos):", e);
+    return [];
+  }
+};
+
+export const createToDo = async (title: string, description: string) => {
+  try {
+    const created = await sql.createToDo(title, description);
+    return created;
+  } catch (e) {
+    console.error("Service error (createToDo):", e);
+    return null;
+  }
+};
+
+export const deleteToDo = async (id: string) => {
+  try {
+    const deleted = await sql.deleteToDo(id);
+    return deleted;
+  } catch (e) {
+    console.error("Service error (deleteToDo):", e);
+    return null;
+  }
+};
+
+// Popula a base de dados se não tiver itens o suficiente.
+// WARN: Deletar antes de subir para produção.
+export const populateDatabase = async () => {
+  const toDos = await sql.getToDos();
+
+  if (toDos.length < 250) {
+    for (let i = 1; i <= 500; i++) {
+      const number = String(i).padStart(3, "0");
+      console.log(`Creating to-do ${number}`);
+      await createToDo(`To-do ${number}`, `Description ${number}`);
     }
-  });
-
-  setToDos(toDos);
-
-  return updatedToDos;
-};
-
-export const bulkDeleteToDos = (ids: string[]) => {
-  const toDos = getToDos();
-
-  const { remainingToDos, deletedToDos } = toDos.reduce(
-    (acc, toDo) => {
-      if (ids.includes(toDo.id)) {
-        acc.deletedToDos.push(toDo);
-      } else {
-        acc.remainingToDos.push(toDo);
-      }
-      return acc;
-    },
-    { remainingToDos: [], deletedToDos: [] } as {
-      remainingToDos: ToDo[];
-      deletedToDos: ToDo[];
-    },
-  );
-
-  setToDos(remainingToDos);
-
-  return deletedToDos;
-};
-
-export const createToDo = (title: string, description: string) => {
-  const toDos = getToDos();
-
-  const newToDo: ToDo = {
-    id: uuidv4(),
-    title,
-    description,
-    completed: false,
-  };
-
-  toDos.push(newToDo);
-
-  setToDos(toDos);
-
-  return newToDo;
-};
-
-export const deleteToDo = (id: string) => {
-  const toDos = getToDos();
-
-  const index = toDos.findIndex((toDo) => toDo.id === id);
-
-  if (index === -1) {
-    return null;
   }
-
-  const [removedToDo] = toDos.splice(index, 1);
-
-  setToDos(toDos);
-
-  return removedToDo;
 };
