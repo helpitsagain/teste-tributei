@@ -1,6 +1,6 @@
 # Frontend - Teste Técnico Tributei
 
-Interface de usuário para aplicação de gerenciamento de tarefas (To-Do List) construída com React, TypeScript e Vite.
+Interface de usuário para gerenciamento de tarefas (To-Do List) construída com React, TypeScript e Vite.
 
 ## Índice
 
@@ -19,37 +19,35 @@ Interface de usuário para aplicação de gerenciamento de tarefas (To-Do List) 
 
 ## Visão Geral
 
-Este frontend é parte da aplicação To-Do List do Teste Técnico Tributei. Permite aos usuários: 
+Este diretório contém apenas o frontend da aplicação To-Do List. A interface permite ao usuário:
 
-- Visualizar lista de tarefas com scroll infinito
+- Visualizar a lista de tarefas com scroll infinito
 - Criar novas tarefas
 - Editar tarefas existentes
 - Marcar tarefas como concluídas
 - Excluir tarefas individualmente
-- Operações em massa (atualizar/excluir múltiplas tarefas)
+- Realizar operações em massa (atualizar/excluir múltiplas tarefas)
 
 ## Tecnologias Utilizadas
 
-| Tecnologia | Versão | Descrição |
-|------------|--------|-----------|
-| **React** | 19.x | Biblioteca para construção de interfaces |
-| **TypeScript** | 4.9.x | Superset tipado do JavaScript |
-| **Vite** | 7.x | Build tool e dev server ultrarrápido |
-| **Axios** | 1.13.x | Cliente HTTP para requisições à API |
-| **Vitest** | 4.x | Framework de testes unitários |
-| **React Testing Library** | 16.x | Utilitários para testes de componentes |
-| **MSW** | 2.x | Mock Service Worker para testes de API |
-| **Sass** | 1.97.x | Pré-processador CSS |
-| **React Infinite Scroll** | 6.x | Componente para scroll infinito |
+- **React** (v17/18/19 compatível) — Biblioteca para construção de interfaces
+- **TypeScript** — Superset tipado do JavaScript
+- **Vite** — Build tool e dev server ultrarrápido
+- **Vitest** — Framework de testes unitários
+- **Axios** — Cliente HTTP usado para chamadas à API
+- **React Testing Library** — Utilitários para testes de componentes
+- **MSW** — Mock Service Worker para testes de integração com API
+- **Sass** — Pré-processador CSS
+- **React Infinite Scroll** — Componente para scroll infinito
 
 ## Pré-requisitos
 
 - **Node.js** 18.x ou superior
 - **npm** 9.x ou superior (ou yarn/pnpm)
-- **Backend** rodando em `http://localhost:3001` (ou URL configurada)
+
+Verifique as versões instaladas:
 
 ```bash
-# Verificar versões instaladas
 node --version
 npm --version
 ```
@@ -58,146 +56,89 @@ npm --version
 
 ```
 frontend/
-├── public/                  # Arquivos estáticos públicos
+├── public/
 ├── src/
 │   ├── __tests__/           # Testes unitários
-│   │   ├── ToDoItem. test.tsx
-│   │   ├── ToDoItemEdit. test.tsx
-│   │   ├── ToDoList.test. tsx
-│   │   └── toDoService.test.ts
 │   ├── components/          # Componentes React
-│   │   ├── BulkActionModal/ # Modal para ações em massa
-│   │   ├── Error/           # Componente de erro
-│   │   ├── Loader/          # Componente de loading
-│   │   ├── NewToDoModal/    # Modal para criar tarefa
-│   │   └── ToDoList/        # Lista de tarefas principal
 │   ├── services/            # Serviços de comunicação com API
-│   │   ├── api.ts           # Configuração do Axios
-│   │   └── toDoService.ts   # Funções de CRUD de tarefas
 │   ├── styles/              # Estilos globais SCSS
-│   │   ├── _mixins.scss     # Mixins reutilizáveis
-│   │   └── _variables.scss  # Variáveis de estilo
-│   ├── types/               # Definições de tipos TypeScript
-│   │   └── toDo.ts          # Tipos relacionados a tarefas
-│   ├── App.css              # Estilos do componente App
-│   ├── App. tsx             # Componente principal
-│   ├── App.test.tsx         # Testes do componente App
-│   ├── index.css            # Estilos globais
-│   ├── index.tsx            # Ponto de entrada da aplicação
-│   ├── setupTests.ts        # Configuração dos testes
-│   └── reportWebVitals.ts   # Métricas de performance
-├── .env.development         # Variáveis de ambiente (desenvolvimento)
-├── .env.production          # Variáveis de ambiente (produção)
-├── index.html               # Template HTML
-├── package.json             # Dependências e scripts
-├── tsconfig.json            # Configuração do TypeScript
-└── vite.config.ts           # Configuração do Vite
+│   └── types/               # Definições de tipos TypeScript
+├── .env.development
+├── .env.production
+├── index.html
+├── package.json
+├── tsconfig.json
+└── vite.config.ts
 ```
 
 ## Instalação e Configuração
 
-### 1. Clonar o repositório
+1. Clone o repositório e entre na pasta `frontend`:
 
 ```bash
 git clone https://github.com/helpitsagain/teste-tributei.git
 cd teste-tributei/frontend
 ```
 
-### 2. Instalar dependências
+2. Instale as dependências:
 
 ```bash
 npm install
 ```
 
-### 3. Configurar variáveis de ambiente
+3. Configure variáveis de ambiente (opcional): crie `.env.development` e/ou `.env.production` na raiz do diretório `frontend`.
 
-Crie os arquivos de ambiente na raiz do diretório `frontend/`:
+Exemplo mínimo (substitua pelo endpoint da sua API):
 
-```env name=. env.development
-VITE_API_BASE_URL=http://localhost:3001/api
+```
+VITE_API_BASE_URL=<SUA_API_URL_AQUI>
 ```
 
-```env name=.env.production
-VITE_API_BASE_URL=https://teste-tributei-backend.vercel.app/api
-```
-
-### 4. Iniciar o servidor de desenvolvimento
+4. Inicie o servidor de desenvolvimento:
 
 ```bash
 npm run dev
 ```
 
-A aplicação estará disponível em:  `http://localhost:3000`
+A aplicação estará disponível em `http://localhost:3000` por padrão.
 
 ## Scripts Disponíveis
 
-| Comando | Descrição |
-|---------|-----------|
-| `npm run dev` | Inicia servidor de desenvolvimento (modo development) |
-| `npm start` | Inicia servidor de desenvolvimento (modo production) |
-| `npm run build` | Cria build de produção otimizada |
-| `npm test` | Executa testes com Vitest |
-| `npm run test:ui` | Executa testes com interface visual |
-| `npm run test:coverage` | Executa testes com relatório de cobertura |
+- `npm run dev` : inicia servidor de desenvolvimento
+- `npm start` : inicia em modo production local (se configurado)
+- `npm run build` : gera build de produção otimizada em `dist/`
+- `npm test` : executa testes com Vitest
+- `npm run test:ui` : executa testes com interface visual
+- `npm run test:coverage` : gera relatório de cobertura
 
 ## Variáveis de Ambiente
 
-| Variável | Descrição | Exemplo |
-|----------|-----------|---------|
-| `VITE_API_BASE_URL` | URL base da API backend | `http://localhost:3001/api` |
+- **`VITE_API_BASE_URL`**: URL base usada pelo frontend para se comunicar com uma API. Deve apontar para a API que fornece os endpoints consumidos pela aplicação.
 
-> **Nota:** Variáveis de ambiente no Vite devem ter o prefixo `VITE_` para serem expostas ao código cliente.
+Nota: Variáveis de ambiente no Vite precisam do prefixo `VITE_` para serem expostas ao código cliente.
 
 ## Componentes
 
-### ToDoList
-Componente principal que renderiza a lista de tarefas com scroll infinito.
-
-### ToDoItem
-Representa uma tarefa individual com opções de editar, excluir e marcar como concluída.
-
-### NewToDoModal
-Modal para criação de novas tarefas com campos de título e descrição.
-
-### BulkActionModal
-Modal para realizar operações em massa (atualizar ou excluir múltiplas tarefas selecionadas).
-
-### Loader
-Componente de loading exibido durante carregamentos assíncronos.
-
-### Error
-Componente para exibição de mensagens de erro.
+- **ToDoList**: componente principal que renderiza a lista com scroll infinito.
+- **ToDoItem**: representa uma tarefa individual com ações (editar, excluir, marcar concluída).
+- **ToDoItemEdit**: formulário de edição inline de uma tarefa.
+- **NewToDoModal**: modal para criação de novas tarefas.
+- **BulkActionModal**: modal para ações em massa sobre tarefas selecionadas.
+- **Loader**: componente de loading usado durante requisições.
+- **Error**: componente para exibir mensagens de erro.
 
 ## Serviços
 
-### api.ts
-Configuração base do Axios com a URL da API. 
+- **`src/services/api.ts`**: configuração do cliente HTTP (Axios) que usa `VITE_API_BASE_URL`.
+- **`src/services/toDoService.ts`**: funções que encapsulam chamadas à API relacionadas a tarefas (listagem, criação, atualização, remoção, operações em massa).
 
-```typescript
-import axios from "axios";
-
-const api = axios.create({
-  baseURL: import.meta.env. VITE_API_BASE_URL,
-});
-```
-
-### toDoService.ts
-Funções para comunicação com a API: 
-
-| Função | Método | Endpoint | Descrição |
-|--------|--------|----------|-----------|
-| `getToDos` | GET | `/items` | Lista tarefas (paginado) |
-| `createToDo` | POST | `/item/new` | Cria nova tarefa |
-| `updateToDo` | PUT | `/item/:id` | Atualiza tarefa |
-| `deleteToDo` | DELETE | `/item/delete/:id` | Remove tarefa |
-| `bulkUpdateToDos` | PUT | `/bulk` | Atualiza múltiplas tarefas |
-| `bulkDeleteToDos` | DELETE | `/bulk/delete` | Remove múltiplas tarefas |
+Mantenha as chamadas centralizadas nesses serviços para facilitar testes e mocks.
 
 ## Testes
 
-O projeto utiliza **Vitest** com **React Testing Library** e **MSW** para mocks de API.
+O projeto usa **Vitest**, **React Testing Library** e **MSW** para mocks de API.
 
-### Executar testes
+Executar testes:
 
 ```bash
 # Executar todos os testes
@@ -210,39 +151,13 @@ npm run test:ui
 npm run test:coverage
 ```
 
-### Arquivos de teste
-
-- `ToDoItem.test.tsx` - Testes do componente de item
-- `ToDoItemEdit.test.tsx` - Testes da edição de item
-- `ToDoList.test.tsx` - Testes da lista de tarefas
-- `toDoService.test.ts` - Testes do serviço de API
-
-### Estrutura de um teste
-
-```typescript
-import { render, screen } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
-import App from "./App";
-
-describe("App", () => {
-  it("renders the To-Do List title", () => {
-    render(<App />);
-    expect(screen.getByText("To-Do List")).toBeInTheDocument();
-  });
-});
-```
+Arquivos de teste principais estão em `src/__tests__/`.
 
 ## Estilização
 
-O projeto utiliza **SCSS** para estilização com arquivos de variáveis e mixins reutilizáveis.
+O projeto utiliza **SCSS** com arquivos de variáveis e mixins em `src/styles/`.
 
-### Variáveis (`_variables.scss`)
-Define cores, espaçamentos, fontes e breakpoints globais. 
-
-### Mixins (`_mixins.scss`)
-Contém mixins reutilizáveis para responsividade e padrões de estilo.
-
-### Uso em componentes
+Exemplo de uso em componentes:
 
 ```scss
 @use "../../styles/variables" as *;
@@ -250,40 +165,20 @@ Contém mixins reutilizáveis para responsividade e padrões de estilo.
 
 .my-component {
   color: $primary-color;
-  @include responsive(tablet) {
-    padding: $spacing-md;
-  }
 }
 ```
 
 ## Build e Deploy
 
-### Build de produção
+Gerar build de produção:
 
 ```bash
 npm run build
 ```
 
-Os arquivos otimizados serão gerados na pasta `dist/`.
+Os arquivos otimizados serão gerados em `dist/`.
 
-### Deploy na Vercel
-
-1. Conecte o repositório à Vercel
-2. Configure as variáveis de ambiente: 
-   - `VITE_API_BASE_URL` = `https://teste-tributei-backend.vercel.app/api`
-3. Defina o diretório do projeto como `frontend`
-4. A Vercel detectará automaticamente o Vite
-
-### Estrutura de build
-
-```
-dist/
-├── assets/
-│   ├── index-[hash].css
-│   └── index-[hash].js
-├── index.html
-└── ... 
-```
+Ao fazer deploy (Vercel, Netlify, etc.), configure a variável de ambiente `VITE_API_BASE_URL` no ambiente da plataforma.
 
 ## Links Úteis
 

@@ -21,7 +21,8 @@
     "build": "vite build",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage"
+    "coverage": "vitest --coverage --run",
+    "test:coverage": "vitest --coverage --run"
   },
   "eslintConfig": {
     "extends": [
