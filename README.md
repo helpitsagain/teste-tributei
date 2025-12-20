@@ -1,6 +1,6 @@
 # Teste Tributei
 
-Aplicação full-stack para gerenciamento de tarefas (To-Do List) construída com React no frontend e Node.js/Express no backend.
+Aplicação full-stack para gerenciamento de tarefas (To-Do List) construída com React no front-end e Node.js/Express no back-end.
 
 ## Índice
 
@@ -9,23 +9,27 @@ Aplicação full-stack para gerenciamento de tarefas (To-Do List) construída co
 - [Pré-requisitos](#pré-requisitos)
 - [Estrutura do Projeto](#estrutura-do-projeto)
 - [Instalação e Configuração](#instalação-e-configuração)
-  - [Backend](#backend)
-  - [Frontend](#frontend)
+  - [Back-end](#back-end)
+  - [Front-end](#front-end)
 - [Executando a Aplicação](#executando-a-aplicação)
 - [Scripts Disponíveis](#scripts-disponíveis)
 - [Endpoints da API](#endpoints-da-api)
-- [Contribuição](#contribuição)
+- [Solução de Problemas](#solução-de-problemas)
 
 ## Visão Geral
 
 Este projeto é uma aplicação de lista de tarefas (To-Do) que permite criar, visualizar, editar e excluir tarefas. A arquitetura é dividida em:
 
-- **Frontend**:  Interface de usuário construída com React e Vite
-- **Backend**: API RESTful construída com Express. js
+- **Front-end**:  Interface de usuário construída com React e Vite
+- **Back-end**: API RESTful construída com Express. js
+
+O deploy do projeto foi feito no Vercel e pode ser acessado pelos seguintes links:
+- [Front-end](https://teste-tributei-frontend.vercel.app/)
+- [Documentação da API (Swagger)](https://teste-tributei-backend.vercel.app/swagger)
 
 ## Tecnologias Utilizadas
 
-### Frontend
+### Front-end
 - **React** 19.x - Biblioteca JavaScript para construção de interfaces
 - **TypeScript** - Superset tipado do JavaScript
 - **Vite** 7.x - Build tool e dev server
@@ -33,7 +37,7 @@ Este projeto é uma aplicação de lista de tarefas (To-Do) que permite criar, v
 - **SCSS/Sass** - Pré-processador CSS
 - **React Testing Library** - Testes de componentes
 
-### Backend
+### Back-end
 - **Node.js** - Runtime JavaScript
 - **Express** 5.x - Framework web para Node. js
 - **TypeScript** - Superset tipado do JavaScript
@@ -97,9 +101,9 @@ git clone https://github.com/helpitsagain/teste-tributei.git
 cd teste-tributei
 ```
 
-### Backend
+### Back-end
 
-1. **Navegue até a pasta do backend:**
+1. **Navegue até a pasta do back-end:**
 
 ```bash
 cd backend
@@ -117,9 +121,9 @@ npm install
 npm run build
 ```
 
-### Frontend
+### Front-end
 
-1. **Navegue até a pasta do frontend:**
+1. **Navegue até a pasta do front-end:**
 
 ```bash
 cd frontend
@@ -137,9 +141,9 @@ npm install
 
 ### Modo Desenvolvimento
 
-Você precisará de **dois terminais** abertos para executar o frontend e o backend simultaneamente. 
+Você precisará de **dois terminais** abertos para executar o front-end e o back-end simultaneamente. 
 
-#### Terminal 1 - Backend
+#### Terminal 1 - Back-end
 
 ```bash
 cd backend
@@ -148,7 +152,7 @@ npm run dev
 
 O servidor estará disponível em:  `http://localhost:3001`
 
-#### Terminal 2 - Frontend
+#### Terminal 2 - Front-end
 
 ```bash
 cd frontend
@@ -159,7 +163,7 @@ A aplicação estará disponível em:  `http://localhost:3000`
 
 ### Modo Produção
 
-#### Backend
+#### Back-end
 
 ```bash
 cd backend
@@ -167,7 +171,7 @@ npm run build
 npm start
 ```
 
-#### Frontend
+#### Front-end
 
 ```bash
 cd frontend
@@ -178,7 +182,7 @@ Os arquivos de build serão gerados na pasta `dist/` e podem ser servidos por qu
 
 ## Scripts Disponíveis
 
-### Backend
+### Back-end
 
 | Comando | Descrição |
 |---------|-----------|
@@ -187,7 +191,7 @@ Os arquivos de build serão gerados na pasta `dist/` e podem ser servidos por qu
 | `npm run dev` | Inicia o servidor em modo desenvolvimento com hot reload |
 | `npm test` | Executa os testes (a ser configurado) |
 
-### Frontend
+### Front-end
 
 | Comando | Descrição |
 |---------|-----------|
@@ -241,7 +245,7 @@ taskkill /PID <PID> /F
 
 ### Erro: "CORS blocked"
 
-Certifique-se de que o backend está rodando e que o middleware CORS está configurado corretamente no `app.ts`.
+Certifique-se de que o back-end está rodando e que o middleware CORS está configurado corretamente no `app.ts`.
 
 ### Erro de módulos não encontrados
 
