@@ -1,12 +1,23 @@
-# Getting Started with Create React App
+# Frontend - Teste Técnico Tributei
 
 Interface de usuário para gerenciamento de tarefas (To-Do List) construída com React, TypeScript e Vite.
 
-## Available Scripts
+## Índice
 
-In the project directory, you can run:
+- [Visão Geral](#visão-geral)
+- [Tecnologias Utilizadas](#tecnologias-utilizadas)
+- [Pré-requisitos](#pré-requisitos)
+- [Estrutura do Projeto](#estrutura-do-projeto)
+- [Instalação e Configuração](#instalação-e-configuração)
+- [Scripts Disponíveis](#scripts-disponíveis)
+- [Variáveis de Ambiente](#variáveis-de-ambiente)
+- [Componentes](#componentes)
+- [Serviços](#serviços)
+- [Testes](#testes)
+- [Estilização](#estilização)
+- [Build e Deploy](#build-e-deploy)
 
-### `npm start`
+## Visão Geral
 
 Este diretório contém apenas o frontend da aplicação To-Do List. A interface permite ao usuário:
 
@@ -17,7 +28,7 @@ Este diretório contém apenas o frontend da aplicação To-Do List. A interface
 - Excluir tarefas individualmente
 - Realizar operações em massa (atualizar/excluir múltiplas tarefas)
 
-### `npm test`
+## Tecnologias Utilizadas
 
 - **React** (v17/18/19 compatível) — Biblioteca para construção de interfaces
 - **TypeScript** — Superset tipado do JavaScript
@@ -29,7 +40,7 @@ Este diretório contém apenas o frontend da aplicação To-Do List. A interface
 - **Sass** — Pré-processador CSS
 - **React Infinite Scroll** — Componente para scroll infinito
 
-### `npm run build`
+## Pré-requisitos
 
 - **Node.js** 18.x ou superior
 - **npm** 9.x ou superior (ou yarn/pnpm)
@@ -41,7 +52,7 @@ node --version
 npm --version
 ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Estrutura do Projeto
 
 ```
 frontend/
@@ -60,15 +71,20 @@ frontend/
 └── vite.config.ts
 ```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Instalação e Configuração
 
 1. Clone o repositório e entre na pasta `frontend`:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```bash
+git clone https://github.com/helpitsagain/teste-tributei.git
+cd teste-tributei/frontend
+```
 
 2. Instale as dependências:
 
-## Learn More
+```bash
+npm install
+```
 
 3. Configure variáveis de ambiente (opcional): crie `.env.development` e/ou `.env.production` na raiz do diretório `frontend`.
 
