@@ -44,7 +44,7 @@ export const bulkDeleteToDos = async (ids: string[]) => {
   }
 };
 
-export const createToDo = async (title: string, description: string) => {
+export const createToDo = async (title: string, description: string): Promise<any> => {
   try {
     const created = await sql.createToDo(title, description);
     return created;

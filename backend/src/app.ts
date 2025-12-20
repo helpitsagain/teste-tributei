@@ -3,7 +3,7 @@ import express from "express";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./config/swagger.js";
 import toDoRoutes from "./routes/todo.routes.js";
-import { populateDatabase } from "./services/todo.service.js";
+// import { populateDatabase } from "./services/todo.service.js";
 
 const app = express();
 
