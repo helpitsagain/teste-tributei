@@ -43,6 +43,6 @@ app.use("/api", toDoRoutes);
 
 // Popula a base de dados se não tiver itens o suficiente.
 // WARN: Deletar antes de subir para produção.
-await populateDatabase();
+// await populateDatabase();
 
 export default app;
