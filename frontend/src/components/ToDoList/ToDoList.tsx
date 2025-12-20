@@ -14,6 +14,7 @@ import Loader from "../Loader/Loader";
 import Error from "../Error/Error";
 import NewToDoModal from "../NewToDoModal/NewToDoModal";
 import "./ToDoList.scss";
+import axios from "axios";
 
 const PAGE_LIMIT = 10;
 
@@ -51,12 +52,14 @@ const TodoList: React.FC = () => {
 
       setHasMore(response.page < response.totalPages);
     } catch (e: any) {
-      console.log(e);
+      console.error(e);
 
-      if (e.response?.data.error) {
-        setError(e.response.data.error);
+      if (axios.isAxiosError(e)) {
+        setError(
+          e.response?.data?.error ?? "Failed to load to-dos. Please try again.",
+        );
       } else {
-        setError("Failed to load todos. Please try again.");
+        setError(String(e) || "Failed to load to-dos. Please try again.");
       }
     } finally {
       setLoading(false);
@@ -102,10 +105,13 @@ const TodoList: React.FC = () => {
       setIsBulkModalOpen(false);
       setSelectedToDos([]);
     } catch (e: any) {
-      console.log(e);
+      console.error(e);
 
-      // setError("Failed to update to-dos.");
-      setError(e.response.data.error);
+      if (axios.isAxiosError(e)) {
+        setError(e.response?.data?.error ?? "Failed to update to-dos.");
+      } else {
+        setError(String(e) || "Failed to update to-dos.");
+      }
     }
   };
 
@@ -140,7 +146,13 @@ const TodoList: React.FC = () => {
         setIsListEmpty(true);
       }
     } catch (e: any) {
-      console.log(e);
+      console.error(e);
+
+      if (axios.isAxiosError(e)) {
+        setError(e.response?.data?.error ?? "Failed to delete to-dos.");
+      } else {
+        setError(String(e) || "Failed to delete to-dos.");
+      }
 
       // setError("Failed to delete to-dos.");
       setError(e.response.data.error);
@@ -151,7 +163,13 @@ const TodoList: React.FC = () => {
     try {
       await createToDo(newToDo);
     } catch (e: any) {
-      console.log(e);
+      console.error(e);
+
+      if (axios.isAxiosError(e)) {
+        setError(e.response?.data?.error ?? "Failed to create to-do");
+      } else {
+        setError(String(e) || "Failed to create to-do");
+      }
 
       // setError("Failed to create to-do");
       setError(e.response.data.error);
@@ -165,7 +183,13 @@ const TodoList: React.FC = () => {
         prev.map((todo) => (todo.id === updatedToDo.id ? updatedToDo : todo)),
       );
     } catch (e: any) {
-      console.log(e);
+      console.error(e);
+
+      if (axios.isAxiosError(e)) {
+        setError(e.response?.data?.error ?? "Failed to update to-do.");
+      } else {
+        setError(String(e) || "Failed to update to-do.");
+      }
 
       // setError("Failed to update to-do.");
       setError(e.response.data.error);
@@ -261,7 +285,7 @@ const TodoList: React.FC = () => {
       {isBulkModalOpen && (
         <BulkActionModal
           selectedIds={selectedToDos}
-          todos={toDos}
+          toDos={toDos}
           onConfirm={handleBulkUpdate}
           onDelete={handleBulkDelete}
           onCancel={() => setIsBulkModalOpen(false)}
