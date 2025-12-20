@@ -1,6 +1,6 @@
 # Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Interface de usuário para gerenciamento de tarefas (To-Do List) construída com React, TypeScript e Vite.
 
 ## Available Scripts
 
@@ -8,39 +8,170 @@ In the project directory, you can run:
 
 ### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Este diretório contém apenas o frontend da aplicação To-Do List. A interface permite ao usuário:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- Visualizar a lista de tarefas com scroll infinito
+- Criar novas tarefas
+- Editar tarefas existentes
+- Marcar tarefas como concluídas
+- Excluir tarefas individualmente
+- Realizar operações em massa (atualizar/excluir múltiplas tarefas)
 
 ### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **React** (v17/18/19 compatível) — Biblioteca para construção de interfaces
+- **TypeScript** — Superset tipado do JavaScript
+- **Vite** — Build tool e dev server ultrarrápido
+- **Vitest** — Framework de testes unitários
+- **Axios** — Cliente HTTP usado para chamadas à API
+- **React Testing Library** — Utilitários para testes de componentes
+- **MSW** — Mock Service Worker para testes de integração com API
+- **Sass** — Pré-processador CSS
+- **React Infinite Scroll** — Componente para scroll infinito
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **Node.js** 18.x ou superior
+- **npm** 9.x ou superior (ou yarn/pnpm)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Verifique as versões instaladas:
+
+```bash
+node --version
+npm --version
+```
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+```
+frontend/
+├── public/
+├── src/
+│   ├── __tests__/           # Testes unitários
+│   ├── components/          # Componentes React
+│   ├── services/            # Serviços de comunicação com API
+│   ├── styles/              # Estilos globais SCSS
+│   └── types/               # Definições de tipos TypeScript
+├── .env.development
+├── .env.production
+├── index.html
+├── package.json
+├── tsconfig.json
+└── vite.config.ts
+```
 
 **Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. Clone o repositório e entre na pasta `frontend`:
 
 Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+2. Instale as dependências:
 
 ## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+3. Configure variáveis de ambiente (opcional): crie `.env.development` e/ou `.env.production` na raiz do diretório `frontend`.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Exemplo mínimo (substitua pelo endpoint da sua API):
+
+```
+VITE_API_BASE_URL=<SUA_API_URL_AQUI>
+```
+
+4. Inicie o servidor de desenvolvimento:
+
+```bash
+npm run dev
+```
+
+A aplicação estará disponível em `http://localhost:3000` por padrão.
+
+## Scripts Disponíveis
+
+- `npm run dev` : inicia servidor de desenvolvimento
+- `npm start` : inicia em modo production local (se configurado)
+- `npm run build` : gera build de produção otimizada em `dist/`
+- `npm test` : executa testes com Vitest
+- `npm run test:ui` : executa testes com interface visual
+- `npm run test:coverage` : gera relatório de cobertura
+
+## Variáveis de Ambiente
+
+- **`VITE_API_BASE_URL`**: URL base usada pelo frontend para se comunicar com uma API. Deve apontar para a API que fornece os endpoints consumidos pela aplicação.
+
+Nota: Variáveis de ambiente no Vite precisam do prefixo `VITE_` para serem expostas ao código cliente.
+
+## Componentes
+
+- **ToDoList**: componente principal que renderiza a lista com scroll infinito.
+- **ToDoItem**: representa uma tarefa individual com ações (editar, excluir, marcar concluída).
+- **ToDoItemEdit**: formulário de edição inline de uma tarefa.
+- **NewToDoModal**: modal para criação de novas tarefas.
+- **BulkActionModal**: modal para ações em massa sobre tarefas selecionadas.
+- **Loader**: componente de loading usado durante requisições.
+- **Error**: componente para exibir mensagens de erro.
+
+## Serviços
+
+- **`src/services/api.ts`**: configuração do cliente HTTP (Axios) que usa `VITE_API_BASE_URL`.
+- **`src/services/toDoService.ts`**: funções que encapsulam chamadas à API relacionadas a tarefas (listagem, criação, atualização, remoção, operações em massa).
+
+Mantenha as chamadas centralizadas nesses serviços para facilitar testes e mocks.
+
+## Testes
+
+O projeto usa **Vitest**, **React Testing Library** e **MSW** para mocks de API.
+
+Executar testes:
+
+```bash
+# Executar todos os testes
+npm test
+
+# Executar com interface visual
+npm run test:ui
+
+# Executar com cobertura de código
+npm run test:coverage
+```
+
+Arquivos de teste principais estão em `src/__tests__/`.
+
+## Estilização
+
+O projeto utiliza **SCSS** com arquivos de variáveis e mixins em `src/styles/`.
+
+Exemplo de uso em componentes:
+
+```scss
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.my-component {
+  color: $primary-color;
+}
+```
+
+## Build e Deploy
+
+Gerar build de produção:
+
+```bash
+npm run build
+```
+
+Os arquivos otimizados serão gerados em `dist/`.
+
+Ao fazer deploy (Vercel, Netlify, etc.), configure a variável de ambiente `VITE_API_BASE_URL` no ambiente da plataforma.
+
+## Links Úteis
+
+- [Documentação do React](https://react.dev/)
+- [Documentação do Vite](https://vitejs.dev/)
+- [Documentação do Vitest](https://vitest.dev/)
+- [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
+- [API Backend - Swagger](https://teste-tributei-backend.vercel.app/swagger)
+
+---
+
+Desenvolvido com ❤️ usando React + TypeScript + Vite

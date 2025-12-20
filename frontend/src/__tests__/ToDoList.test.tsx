@@ -13,17 +13,16 @@ describe("TodoList", () => {
   ];
 
   beforeEach(() => {
-    // @ts-ignore - configurando o mock retornado por getToDos
-    (toDoService.getToDos as vi.Mock).mockResolvedValue({
+    const mockedService = vi.mocked(toDoService);
+    mockedService.getToDos.mockResolvedValue({
       toDos: mockToDos,
       page: 1,
       totalPages: 1,
     });
-    // Mocks para outras funções apenas para evitar erros
-    (toDoService.bulkUpdateToDos as vi.Mock).mockResolvedValue({});
-    (toDoService.bulkDeleteToDos as vi.Mock).mockResolvedValue({});
-    (toDoService.createToDo as vi.Mock).mockResolvedValue({});
-    (toDoService.updateToDo as vi.Mock).mockResolvedValue({});
+    mockedService.bulkUpdateToDos.mockResolvedValue({});
+    mockedService.bulkDeleteToDos.mockResolvedValue({});
+    mockedService.createToDo.mockResolvedValue({});
+    mockedService.updateToDo.mockResolvedValue({});
   });
 
   afterEach(() => {
@@ -33,7 +32,6 @@ describe("TodoList", () => {
   it("loads and displays todos from service", async () => {
     render(<TodoList />);
 
-    // espera os itens serem carregados
     await waitFor(() => {
       expect(screen.getByText("A")).toBeInTheDocument();
       expect(screen.getByText("B")).toBeInTheDocument();
@@ -48,7 +46,6 @@ describe("TodoList", () => {
     const selectAllBtn = screen.getByText(/Select All/i);
     fireEvent.click(selectAllBtn);
 
-    // Após selecionar todos, o texto do botão muda para "Deselect All"
     expect(screen.getByText(/Deselect All/i)).toBeInTheDocument();
   });
 
