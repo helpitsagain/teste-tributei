@@ -1,21 +1,14 @@
 import { Router } from "express";
-import {
-  bulkDeleteToDos,
-  bulkUpdateToDos,
-  // getTodoById,
-  createToDo,
-  deleteToDo,
-  getToDos,
-  updateToDo,
-} from "../controllers/todo.controller.js";
+import * as controller from "../controllers/todo.controller.js";
 
 const router = Router();
 
-router.post("/item/new", createToDo);
-router.get("/items", getToDos);
-router.put("/bulk", bulkUpdateToDos);
-router.delete("/bulk/delete", bulkDeleteToDos);
-router.put("/item/:id", updateToDo);
-router.delete("/item/:id", deleteToDo);
+router.post("/item/new", controller.createToDo);
+router.get("/items", controller.getToDos);
+router.get("/items/filter", controller.getToDosFiltered);
+router.put("/bulk", controller.bulkUpdateToDos);
+router.delete("/bulk/delete", controller.bulkDeleteToDos);
+router.put("/item/:id", controller.updateToDo);
+router.delete("/item/:id", controller.deleteToDo);
 
 export default router;

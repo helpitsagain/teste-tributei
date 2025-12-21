@@ -1,13 +1,14 @@
 import { neon } from "@neondatabase/serverless";
 import "dotenv/config";
 import { v4 as uuidv4 } from "uuid";
+import { ToDo } from "../models/todo.model.js";
 
 const sql = neon(process.env.DATABASE_URL!);
 
 export const getToDos = async () => {
   try {
     const results =
-      await sql`SELECT id, title, description, completed FROM todos;`;
+      await sql`SELECT id, title, description, completed, created_date, updated_date FROM todos;`;
     return results;
   } catch (e) {
     console.error("DB error (getToDos):", e);
@@ -15,13 +16,23 @@ export const getToDos = async () => {
   }
 };
 
-export const getToDosPaginated = async (page: number, limit: number) => {
+export const getToDosPaginated = async (
+  page: number,
+  limit: number,
+  completed?: boolean,
+) => {
   try {
     const offset = (page - 1) * limit;
+    const hasFilter = typeof completed === "boolean";
 
-    const toDos =
-      await sql`SELECT id, title, description, completed FROM todos ORDER BY title LIMIT ${limit} OFFSET ${offset};`;
-    const countResult = await sql`SELECT COUNT(*)::text AS count FROM todos;`;
+    const toDos = hasFilter
+      ? await sql`SELECT id, title, description, completed, created_date, updated_date FROM todos WHERE completed = ${completed} ORDER BY title LIMIT ${limit} OFFSET ${offset};`
+      : await sql`SELECT id, title, description, completed, created_date, updated_date FROM todos ORDER BY title LIMIT ${limit} OFFSET ${offset};`;
+
+    const countResult = hasFilter
+      ? await sql`SELECT COUNT(*)::text AS count FROM todos WHERE completed = ${completed};`
+      : await sql`SELECT COUNT(*)::text AS count FROM todos;`;
+
     const total = countResult?.[0] ? parseInt(countResult[0].count, 10) : 0;
 
     return {
@@ -32,6 +43,52 @@ export const getToDosPaginated = async (page: number, limit: number) => {
     };
   } catch (e) {
     console.error("DB error (getToDosPaginated):", e);
+    return { toDos: [], total: 0, page, totalPages: 0 };
+  }
+};
+
+export const getToDosFiltered = async (
+  page: number,
+  limit: number,
+  filters?: Partial<ToDo>,
+) => {
+  try {
+    const offset = (page - 1) * limit;
+
+    const escape = (s: string) => s.replace(/'/g, "''");
+
+    const conditions: string[] = [];
+    if (filters) {
+      if (typeof filters.completed === "boolean") {
+        conditions.push(`completed = ${filters.completed}`);
+      }
+      if (filters.title) {
+        conditions.push(`title ILIKE '%${escape(filters.title)}%'`);
+      }
+      if (filters.description) {
+        conditions.push(`description ILIKE '%${escape(filters.description)}%'`);
+      }
+    }
+
+    const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
+
+    const query = `SELECT id, title, description, completed, created_date, updated_date FROM todos ${where} ORDER BY title LIMIT ${limit} OFFSET ${offset};`;
+
+    const countQuery = `SELECT COUNT(*)::text AS count FROM todos ${where};`;
+
+    const toDos = await sql.query(query);
+    const countResult = await sql.query(countQuery);
+
+    const total = countResult?.[0] ? parseInt(countResult[0].count, 10) : 0;
+
+    return {
+      toDos,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
+  } catch (e) {
+    console.error("DB error (getToDosFiltered):", e);
     return { toDos: [], total: 0, page, totalPages: 0 };
   }
 };
