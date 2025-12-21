@@ -5,14 +5,15 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "vitest --run",
-    "test:watch": "vitest --watch",
     "ci": "vitest --run",
     "coverage": "vitest --coverage",
-    "test:coverage": "vitest --coverage --run",
     "start": "NODE_ENV=production node dist/server.js",
     "build": "tsc",
-    "dev": "NODE_ENV=development nodemon --watch 'src/**/*' -e ts,json --exec 'tsx' src/server.ts"
+    "dev": "NODE_ENV=development nodemon --watch 'src/**/*' -e ts,json --exec 'tsx' src/server.ts",
+    "test": "vitest --run",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage --run",
+    "test:watch": "vitest --watch"
   },
   "keywords": [],
   "author": "",
