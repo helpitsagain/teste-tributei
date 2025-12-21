@@ -26,8 +26,8 @@ export const getToDosPaginated = async (
     const hasFilter = typeof completed === "boolean";
 
     const toDos = hasFilter
-      ? await sql`SELECT id, title, description, completed, created_date, updated_date FROM todos WHERE completed = ${completed} ORDER BY title LIMIT ${limit} OFFSET ${offset};`
-      : await sql`SELECT id, title, description, completed, created_date, updated_date FROM todos ORDER BY title LIMIT ${limit} OFFSET ${offset};`;
+      ? await sql`SELECT id, title, description, completed, created_date, updated_date FROM todos WHERE completed = ${completed} ORDER BY updated_date DESC LIMIT ${limit} OFFSET ${offset};`
+      : await sql`SELECT id, title, description, completed, created_date, updated_date FROM todos ORDER BY updated_date DESC LIMIT ${limit} OFFSET ${offset};`;
 
     const countResult = hasFilter
       ? await sql`SELECT COUNT(*)::text AS count FROM todos WHERE completed = ${completed};`
@@ -72,7 +72,7 @@ export const getToDosFiltered = async (
 
     const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
 
-    const query = `SELECT id, title, description, completed, created_date, updated_date FROM todos ${where} ORDER BY title LIMIT ${limit} OFFSET ${offset};`;
+    const query = `SELECT id, title, description, completed, created_date, updated_date FROM todos ${where} ORDER BY updated_date DESC LIMIT ${limit} OFFSET ${offset};`;
 
     const countQuery = `SELECT COUNT(*)::text AS count FROM todos ${where};`;
 
