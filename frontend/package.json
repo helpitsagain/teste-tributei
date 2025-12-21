@@ -19,10 +19,10 @@
     "start": "vite --mode production",
     "dev": "vite --mode development",
     "build": "vite build",
-    "test": "vitest",
-    "test:ui": "vitest --ui",
-    "coverage": "vitest --coverage --run",
-    "test:coverage": "vitest --coverage --run"
+    "test": "vitest --run",
+    "test:coverage": "vitest --coverage --run",
+    "test:watch": "vitest --watch",
+    "test:ui": "vitest --ui"
   },
   "eslintConfig": {
     "extends": [

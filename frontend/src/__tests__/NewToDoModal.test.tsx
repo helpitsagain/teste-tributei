@@ -16,6 +16,7 @@ describe("NewToDoModal", () => {
     fireEvent.change(textboxes[1], { target: { value: "A desc" } });
 
     fireEvent.click(screen.getByRole("button", { name: /^Create$/i }));
+    fireEvent.click(screen.getByRole("button", { name: /^Confirm$/i }));
 
     expect(onConfirm).toHaveBeenCalledWith({ title: "New title", description: "A desc" });
   });
