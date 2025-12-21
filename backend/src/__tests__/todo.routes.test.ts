@@ -1,7 +1,7 @@
 import request from "supertest";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import app from "../app.js";
-import * as model from "../models/todo.model.js";
+import * as service from "../services/todo.service.js";
 
 const sampleToDos = [
   { id: "1", title: "A", description: "a", completed: false },
@@ -13,7 +13,12 @@ describe("todo.routes", () => {
   });
 
   it("GET /api/items returns paginated data", async () => {
-    vi.spyOn(model, "getToDos").mockReturnValue([...sampleToDos]);
+    vi.spyOn(service, "getToDosPaginated").mockResolvedValue({
+      toDos: [...sampleToDos],
+      total: 1,
+      page: 1,
+      totalPages: 1,
+    } as any);
 
     const res = await request(app).get("/api/items");
 
@@ -23,8 +28,12 @@ describe("todo.routes", () => {
   });
 
   it("POST /api/item/new creates a todo", async () => {
-    vi.spyOn(model, "getToDos").mockReturnValue([]);
-    vi.spyOn(model, "setToDos").mockImplementation(() => {});
+    vi.spyOn(service, "createToDo").mockResolvedValue({
+      id: "new",
+      title: "T",
+      description: "D",
+      completed: false,
+    } as any);
 
     const res = await request(app)
       .post("/api/item/new")
@@ -36,7 +45,7 @@ describe("todo.routes", () => {
   });
 
   it("PUT /api/item/:id returns 404 for not found", async () => {
-    vi.spyOn(model, "getToDos").mockReturnValue([]);
+    vi.spyOn(service, "updateToDo").mockResolvedValue(null);
 
     const res = await request(app)
       .put("/api/item/unknown")
@@ -47,8 +56,12 @@ describe("todo.routes", () => {
 
   it("PUT /api/item/:id updates and returns the todo", async () => {
     const arr = [{ id: "1", title: "A", description: "a", completed: false }];
-    vi.spyOn(model, "getToDos").mockReturnValue(arr);
-    vi.spyOn(model, "setToDos").mockImplementation(() => {});
+    vi.spyOn(service, "updateToDo").mockResolvedValue({
+      id: "1",
+      title: "A-updated",
+      description: "a",
+      completed: false,
+    } as any);
 
     const res = await request(app)
       .put("/api/item/1")
@@ -60,12 +73,12 @@ describe("todo.routes", () => {
   });
 
   it("DELETE /api/item/:id deletes and returns the todo", async () => {
-    const arr = [
-      { id: "1", title: "A", description: "a", completed: false },
-      { id: "2", title: "B", description: "b", completed: false },
-    ];
-    vi.spyOn(model, "getToDos").mockReturnValue(arr);
-    vi.spyOn(model, "setToDos").mockImplementation(() => {});
+    vi.spyOn(service, "deleteToDo").mockResolvedValue({
+      id: "1",
+      title: "A",
+      description: "a",
+      completed: false,
+    } as any);
 
     const res = await request(app).delete("/api/item/1");
 
@@ -75,16 +88,12 @@ describe("todo.routes", () => {
   });
 
   it("DELETE /api/item/:id returns 404 when not found", async () => {
-    vi.spyOn(model, "getToDos").mockReturnValue([]);
-
     const res = await request(app).delete("/api/item/unknown");
 
     expect(res.status).toBe(404);
   });
 
   it("POST /api/item/new returns 400 when title missing", async () => {
-    vi.spyOn(model, "getToDos").mockReturnValue([]);
-
     const res = await request(app)
       .post("/api/item/new")
       .send({ description: "no title" });
@@ -94,7 +103,10 @@ describe("todo.routes", () => {
 
   it("PUT /api/bulk returns 400 when ids is not array", async () => {
     const arr = [{ id: "1", title: "A", description: "a", completed: false }];
-    vi.spyOn(model, "getToDos").mockReturnValue(arr);
+    vi.spyOn(service, "bulkUpdateToDos").mockResolvedValue([
+      { id: "1", title: "A", description: "a", completed: true },
+      { id: "2", title: "B", description: "b", completed: true },
+    ] as any);
 
     const res = await request(app)
       .put("/api/bulk")
@@ -104,9 +116,6 @@ describe("todo.routes", () => {
   });
 
   it("DELETE /api/bulk/delete returns 400 when ids empty", async () => {
-    const arr = [{ id: "1", title: "A", description: "a", completed: false }];
-    vi.spyOn(model, "getToDos").mockReturnValue(arr);
-
     const res = await request(app).delete("/api/bulk/delete").send({ ids: [] });
 
     expect(res.status).toBe(400);
@@ -133,8 +142,10 @@ describe("todo.routes", () => {
       { id: "1", title: "A", description: "a", completed: false },
       { id: "2", title: "B", description: "b", completed: false },
     ];
-    vi.spyOn(model, "getToDos").mockReturnValue(arr);
-    vi.spyOn(model, "setToDos").mockImplementation(() => {});
+    vi.spyOn(service, "bulkUpdateToDos").mockResolvedValue([
+      { id: "1", title: "A", description: "a", completed: true },
+      { id: "2", title: "B", description: "b", completed: true },
+    ] as any);
 
     const res = await request(app)
       .put("/api/bulk")
@@ -147,12 +158,9 @@ describe("todo.routes", () => {
   });
 
   it("DELETE /api/bulk/delete removes multiple todos", async () => {
-    const arr = [
-      { id: "1", title: "A", description: "a", completed: false },
+    vi.spyOn(service, "bulkDeleteToDos").mockResolvedValue([
       { id: "2", title: "B", description: "b", completed: false },
-    ];
-    vi.spyOn(model, "getToDos").mockReturnValue(arr);
-    vi.spyOn(model, "setToDos").mockImplementation(() => {});
+    ] as any);
 
     const res = await request(app)
       .delete("/api/bulk/delete")
