@@ -1,0 +1,72 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.modal-overlay {
+  @include modal-overlay;
+}
+
+.filters-modal {
+  @include modal-content;
+
+  &__title {
+    margin-top: 0;
+    margin-bottom: $spacing-md;
+    color: $dark-bg;
+    font-size: $font-size-xl;
+  }
+
+  &__content {
+    margin-bottom: $spacing-lg;
+    padding: $spacing-md;
+    background-color: #f9f9f9;
+    border-radius: $border-radius-sm;
+    text-align: center;
+    color: $text-color;
+  }
+
+  &__actions {
+    display: flex;
+    gap: $spacing-sm;
+
+    @include responsive(mobile) {
+      flex-direction: column;
+    }
+
+    button {
+      flex: 1;
+
+      &#apply {
+        @include button-primary;
+      }
+
+      &#clear {
+        @include button-warning;
+      }
+
+      &#cancel {
+        @include button-secondary;
+      }
+    }
+  }
+}
+
+.filters-form {
+  .filters-form__field {
+    margin-bottom: $spacing-sm;
+    display: flex;
+    flex-direction: column;
+
+    label {
+      margin-bottom: $spacing-xs;
+      text-align: left;
+    }
+
+    input,
+    textarea,
+    select {
+      padding: $spacing-sm;
+      border-radius: $border-radius-sm;
+      border: 1px solid $border-color;
+    }
+  }
+}

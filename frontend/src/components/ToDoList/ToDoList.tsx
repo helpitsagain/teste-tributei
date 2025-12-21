@@ -13,6 +13,7 @@ import BulkActionModal from "../BulkActionModal/BulkActionModal";
 import Loader from "../Loader/Loader";
 import Error from "../Error/Error";
 import NewToDoModal from "../NewToDoModal/NewToDoModal";
+import FiltersModal from "../FiltersModal/FiltersModal";
 import "./ToDoList.scss";
 import axios from "axios";
 
@@ -27,44 +28,94 @@ const TodoList: React.FC = () => {
   const [selectedToDos, setSelectedToDos] = useState<string[]>([]);
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
   const [isNewToDoModalOpen, setIsNewToDoModalOpen] = useState(false);
+  const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
+  const [filters, setFilters] = useState<
+    | { title?: string; description?: string; completed?: boolean | null }
+    | undefined
+  >(undefined);
   const [isListEmpty, setIsListEmpty] = useState(false);
 
   const initialLoadRef = useRef(false);
 
-  const loadToDos = useCallback(async () => {
-    if (loading) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await getToDos(page, PAGE_LIMIT);
+  const loadToDos = useCallback(
+    async (
+      pageToLoad: number = page,
+      overrideFilters?: {
+        title?: string;
+        description?: string;
+        completed?: boolean | null;
+      },
+    ) => {
+      if (loading) return;
+      setLoading(true);
+      setError(null);
+      try {
+        const usedFilters = overrideFilters ?? filters;
+        const response = await getToDos(pageToLoad, PAGE_LIMIT, usedFilters);
 
-      setToDos((prev) => {
-        const existingIds = new Set(prev.map((toDo) => toDo.id));
+        setToDos((prev) => {
+          const existingIds = new Set(prev.map((toDo) => toDo.id));
 
-        const newToDos = response.toDos.filter(
-          (toDo) => !existingIds.has(toDo.id),
-        );
+          const newToDos = response.toDos.filter(
+            (toDo) => !existingIds.has(toDo.id),
+          );
 
-        return [...prev, ...newToDos];
-      });
+          // if we're loading the first page (new filters or fresh load), replace
+          if (pageToLoad === 1) {
+            return response.toDos;
+          }
 
-      setPage(response.page + 1);
+          // otherwise append only new items
+          return [...prev, ...newToDos];
+        });
 
-      setHasMore(response.page < response.totalPages);
-    } catch (e: any) {
-      console.error(e);
+        setPage(response.page + 1);
 
-      if (axios.isAxiosError(e)) {
-        setError(
-          e.response?.data?.error ?? "Failed to load to-dos. Please try again.",
-        );
-      } else {
-        setError(String(e) || "Failed to load to-dos. Please try again.");
+        setHasMore(response.page < response.totalPages);
+      } catch (e: any) {
+        console.error(e);
+
+        if (axios.isAxiosError(e)) {
+          setError(
+            e.response?.data?.error ??
+              "Failed to load to-dos. Please try again.",
+          );
+        } else {
+          setError(String(e) || "Failed to load to-dos. Please try again.");
+        }
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  }, [page, loading]);
+    },
+    [loading, filters],
+  );
+
+  const handleOpenFilters = () => setIsFiltersModalOpen(true);
+  const [isSortOpen, setIsSortOpen] = useState(false);
+
+  const handleApplyFilters = (newFilters: {
+    title?: string;
+    description?: string;
+    completed?: boolean | null;
+  }) => {
+    setFilters(newFilters);
+    setToDos([]);
+    setPage(1);
+    setHasMore(true);
+    setIsListEmpty(false);
+    setIsFiltersModalOpen(false);
+    loadToDos(1, newFilters);
+  };
+
+  const handleClearFilters = () => {
+    setFilters(undefined);
+    setToDos([]);
+    setPage(1);
+    setHasMore(true);
+    setIsListEmpty(true);
+    setIsFiltersModalOpen(false);
+    loadToDos(1, {});
+  };
 
   const handleSelectTodo = (id: string) => {
     setSelectedToDos((prev) =>
@@ -209,7 +260,7 @@ const TodoList: React.FC = () => {
       setIsListEmpty(false);
       loadToDos();
     }
-  }, [isListEmpty, loadToDos]);
+  }, [isListEmpty, loadToDos, filters]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -234,23 +285,76 @@ const TodoList: React.FC = () => {
   return (
     <div className="todo-list">
       <div className="todo-list__actions">
-        <button onClick={handleCreateToDoButton}>Create new to-do</button>
-        <button onClick={handleSelectAll}>
-          {selectedToDos.length === toDos.length
-            ? "Deselect All"
-            : "Select All"}
-        </button>
-        {!!selectedToDos.length && selectedToDos.length !== toDos.length ? (
-          <button onClick={() => setSelectedToDos([])}>Deselect all</button>
-        ) : (
-          <></>
-        )}
-        <button
-          onClick={handleBulkActionButton}
-          disabled={selectedToDos.length === 0}
-        >
-          Bulk Actions
-        </button>
+        <div className="todo-list__actions__top">
+          <button id="create" onClick={handleCreateToDoButton}>
+            Create new to-do
+          </button>
+          <button id="select" onClick={handleSelectAll}>
+            {selectedToDos.length === toDos.length
+              ? "Deselect All"
+              : "Select All"}
+          </button>
+          {!!selectedToDos.length && selectedToDos.length !== toDos.length ? (
+            <button id="select" onClick={() => setSelectedToDos([])}>
+              Deselect all
+            </button>
+          ) : (
+            <></>
+          )}
+          <button
+            id="bulk"
+            onClick={handleBulkActionButton}
+            disabled={selectedToDos.length === 0}
+          >
+            Bulk Actions
+          </button>
+        </div>
+        <div className="todo-list__actions__bottom">
+          <div className="todo-list__actions__bottom__filters">
+            <button id="filters" onClick={handleOpenFilters}>
+              Filters
+            </button>
+            {filters && (
+              <button id="clear-filters" onClick={handleClearFilters}>
+                Clear filters
+              </button>
+            )}
+          </div>
+          {/* TODO: descomentar após implementar sort-by  */}
+
+          {/* <div className="todo-list__actions__bottom__sort"> */}
+          {/*   <label htmlFor="sort-by" style={{ display: "none" }}> */}
+          {/*     Sort by */}
+          {/*   </label> */}
+          {/*   <div className={"select-wrapper" + (isSortOpen ? " is-open" : "")}> */}
+          {/*     <select */}
+          {/*       id="sort-by" */}
+          {/*       name="sort-by" */}
+          {/*       onMouseDown={() => setIsSortOpen(true)} */}
+          {/*       onBlur={() => setIsSortOpen(false)} */}
+          {/*       onChange={() => setIsSortOpen(false)} */}
+          {/*     > */}
+          {/*       <option value="" selected disabled> */}
+          {/*         -- Sort by -- */}
+          {/*       </option> */}
+          {/*       <option value="a-z">A-Z</option> */}
+          {/*       <option value="z-a">Z-A</option> */}
+          {/*       <option value="created-desc"> */}
+          {/*         Created date (newer to older) */}
+          {/*       </option> */}
+          {/*       <option value="created-asc"> */}
+          {/*         Created date (older to newer) */}
+          {/*       </option> */}
+          {/*       <option value="updated-desc"> */}
+          {/*         Updated date (newer to older) */}
+          {/*       </option> */}
+          {/*       <option value="updated-asc"> */}
+          {/*         Updated date (older to newer) */}
+          {/*       </option> */}
+          {/*     </select> */}
+          {/*   </div> */}
+          {/* </div> */}
+        </div>
       </div>
 
       <InfiniteScroll
@@ -279,6 +383,16 @@ const TodoList: React.FC = () => {
             setIsNewToDoModalOpen(false);
           }}
           error={error}
+        />
+      )}
+
+      {isFiltersModalOpen && (
+        <FiltersModal
+          onConfirm={handleApplyFilters}
+          onClearFilters={handleClearFilters}
+          onCancel={() => setIsFiltersModalOpen(false)}
+          error={error}
+          initialFilters={filters}
         />
       )}
 
