@@ -28,6 +28,7 @@ const TodoList: React.FC = () => {
   const [selectedToDos, setSelectedToDos] = useState<string[]>([]);
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
   const [isNewToDoModalOpen, setIsNewToDoModalOpen] = useState(false);
+  const [pendingCreated, setPendingCreated] = useState<ToDo[]>([]);
   const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
   const [filters, setFilters] = useState<
     | { title?: string; description?: string; completed?: boolean | null }
@@ -212,7 +213,9 @@ const TodoList: React.FC = () => {
 
   const handleCreateToDo = async (newToDo: Partial<ToDo>) => {
     try {
-      await createToDo(newToDo);
+      const created = await createToDo(newToDo);
+      setPendingCreated((prev) => [...prev, created]);
+      setError(null);
     } catch (e: any) {
       console.error(e);
 
@@ -225,6 +228,17 @@ const TodoList: React.FC = () => {
       // setError("Failed to create to-do");
       setError(e.response.data.error);
     }
+  };
+
+  const handleConcludeCreateToDo = () => {
+    if (pendingCreated.length > 0) {
+      const toPrepend = [...pendingCreated].reverse();
+      setToDos((prev) => [...toPrepend, ...prev]);
+      setPendingCreated([]);
+    }
+    setError(null);
+    setIsNewToDoModalOpen(false);
+    loadToDos(1);
   };
 
   const handleUpdateTodo = async (updatedToDo: ToDo) => {
@@ -378,10 +392,7 @@ const TodoList: React.FC = () => {
       {isNewToDoModalOpen && (
         <NewToDoModal
           onConfirm={handleCreateToDo}
-          onCancel={() => {
-            setError(null);
-            setIsNewToDoModalOpen(false);
-          }}
+          onCancel={handleConcludeCreateToDo}
           error={error}
         />
       )}
