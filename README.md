@@ -207,10 +207,13 @@ Os arquivos de build serão gerados na pasta `dist/` e podem ser servidos por qu
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
 | `GET` | `/` | Verifica se a API está funcionando |
-| `GET` | `/api/todos` | Lista todas as tarefas |
-| `POST` | `/api/todos` | Cria uma nova tarefa |
-| `PUT` | `/api/todos/:id` | Atualiza uma tarefa |
-| `DELETE` | `/api/todos/:id` | Remove uma tarefa |
+| `GET` | `/api/items` | Lista todas as tarefas |
+| `GET` | `/api/items/filter` | Lista tarefas com filtros |
+| `POST` | `/api/item/new` | Cria uma nova tarefa |
+| `PUT` | `/api/item/:id` | Atualiza uma tarefa |
+| `DELETE` | `/api/item/:id` | Remove uma tarefa |
+| `PUT` | `/api/bulk` | Atualiza tarefas em lote |
+| `DELETE` | `/api/bulk/delete` | Remove tarefas em lote |
 
 ### Exemplo de Requisição
 
@@ -219,10 +222,10 @@ Os arquivos de build serão gerados na pasta `dist/` e podem ser servidos por qu
 curl http://localhost:3001/
 
 # Listar todas as tarefas
-curl http://localhost:3001/api/todos
+curl http://localhost:3001/api/items
 
 # Criar nova tarefa
-curl -X POST http://localhost:3001/api/todos \
+curl -X POST http://localhost:3001/api/item \
   -H "Content-Type: application/json" \
   -d '{"title": "Minha nova tarefa", "description": "Descrição da tarefa"}'
 ```
