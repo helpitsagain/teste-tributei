@@ -3,4 +3,6 @@ export interface ToDo {
   title: string;
   description: string;
   completed: boolean;
+  createdDate?: string;
+  updatedDate?: string;
 }

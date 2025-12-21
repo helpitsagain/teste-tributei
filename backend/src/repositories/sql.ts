@@ -39,9 +39,11 @@ export const getToDosPaginated = async (page: number, limit: number) => {
 export const createToDo = async (title: string, description: string) => {
   try {
     const newId = uuidv4();
+    const createdDate = new Date().toISOString();
+
     const [result] =
-      await sql`INSERT INTO todos (id, title, description, completed) VALUES (
-      ${newId}, ${title}, ${description}, false
+      await sql`INSERT INTO todos (id, title, description, completed, created_date, updated_date) VALUES (
+      ${newId}, ${title}, ${description}, false, ${createdDate}, ${createdDate}
     ) RETURNING id, title, description, completed;`;
 
     return result;
@@ -66,9 +68,10 @@ export const updateToDo = async (
       typeof updates.completed === "boolean"
         ? updates.completed
         : existing.completed;
+    const newUpdatedDate = new Date().toISOString();
 
     const [updated] =
-      await sql`UPDATE todos SET title = ${newTitle}, description = ${newDescription}, completed = ${newCompleted} WHERE id = ${id} RETURNING id, title, description, completed;`;
+      await sql`UPDATE todos SET title = ${newTitle}, description = ${newDescription}, completed = ${newCompleted}, updated_date = ${newUpdatedDate} WHERE id = ${id} RETURNING id, title, description, completed;`;
     return updated;
   } catch (e) {
     console.error("DB error (updateToDo):", e);

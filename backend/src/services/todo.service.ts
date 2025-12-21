@@ -44,7 +44,10 @@ export const bulkDeleteToDos = async (ids: string[]) => {
   }
 };
 
-export const createToDo = async (title: string, description: string): Promise<any> => {
+export const createToDo = async (
+  title: string,
+  description: string,
+): Promise<any> => {
   try {
     const created = await sql.createToDo(title, description);
     return created;
@@ -66,16 +69,16 @@ export const deleteToDo = async (id: string) => {
 
 // Popula a base de dados se não tiver itens o suficiente.
 // WARN: Deletar antes de subir para produção.
-// export const populateDatabase = async () => {
-//   const toDos = await sql.getToDos();
-//   const rand5 = () =>
-//     [...Array(5)].map(() => Math.random().toString(36)[2]).join("");
-//
-//   if (toDos.length < 500) {
-//     for (let i = toDos.length + 1; i <= 500; i++) {
-//       const number = String(i).padStart(3, "0");
-//       console.log(`Creating to-do ${number}`);
-//       await createToDo(`To-do ${number} (${rand5()})`, `Description ${number}`);
-//     }
-//   }
-// };
+export const populateDatabase = async () => {
+  const toDos = await sql.getToDos();
+  const rand5 = () =>
+    [...Array(5)].map(() => Math.random().toString(36)[2]).join("");
+
+  if (toDos.length < 500) {
+    for (let i = toDos.length + 1; i <= 500; i++) {
+      const number = String(i).padStart(3, "0");
+      console.log(`Creating to-do ${number}`);
+      await createToDo(`To-do ${number} (${rand5()})`, `Description ${number}`);
+    }
+  }
+};
