@@ -1,12 +1,30 @@
 import { ToDo } from "../models/todo.model.js";
 import * as sql from "../repositories/sql.js";
 
-export const getToDosPaginated = async (page: number, limit: number) => {
+export const getToDosPaginated = async (
+  page: number,
+  limit: number,
+  completed?: boolean,
+) => {
   try {
-    const result = await sql.getToDosPaginated(page, limit);
+    const result = await sql.getToDosPaginated(page, limit, completed);
     return result;
   } catch (e) {
     console.error("Service error (getToDosPaginated):", e);
+    return { toDos: [], total: 0, page, totalPages: 0 };
+  }
+};
+
+export const getToDosFiltered = async (
+  page: number,
+  limit: number,
+  filters?: Partial<ToDo>,
+) => {
+  try {
+    const result = await sql.getToDosFiltered(page, limit, filters as any);
+    return result;
+  } catch (e) {
+    console.error("Service error (getToDosFiltered):", e);
     return { toDos: [], total: 0, page, totalPages: 0 };
   }
 };

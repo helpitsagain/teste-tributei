@@ -72,11 +72,53 @@ const options: swaggerJsdoc.Options = {
               default: false,
               example: false,
             },
-            createdAt: {
+            created_date: {
               type: "string",
               format: "date-time",
-              description: "Data de criação",
+              description: "Data de criação (campo no banco)",
               example: "2025-12-19T10:30:00Z",
+            },
+            updated_date: {
+              type: "string",
+              format: "date-time",
+              description: "Data de atualização (campo no banco)",
+              example: "2025-12-20T11:00:00Z",
+            },
+          },
+        },
+        TodoListResponse: {
+          type: "object",
+          properties: {
+            toDos: {
+              type: "array",
+              items: { $ref: "#/components/schemas/Todo" },
+            },
+            total: { type: "integer", example: 123 },
+            page: { type: "integer", example: 1 },
+            totalPages: { type: "integer", example: 7 },
+          },
+        },
+        CreateToDoResponse: {
+          type: "object",
+          properties: {
+            newToDo: { $ref: "#/components/schemas/Todo" },
+          },
+        },
+        BulkUpdateResponse: {
+          type: "object",
+          properties: {
+            updatedTodos: {
+              type: "array",
+              items: { $ref: "#/components/schemas/Todo" },
+            },
+          },
+        },
+        BulkDeleteResponse: {
+          type: "object",
+          properties: {
+            updatedTodos: {
+              type: "array",
+              items: { $ref: "#/components/schemas/Todo" },
             },
           },
         },
@@ -132,7 +174,7 @@ const options: swaggerJsdoc.Options = {
       },
       "/api/items": {
         get: {
-          summary: "Lista todas as tarefas",
+          summary: "Lista paginada de tarefas",
           tags: ["To-Dos"],
           parameters: [
             {
@@ -150,19 +192,16 @@ const options: swaggerJsdoc.Options = {
             {
               in: "query",
               name: "limit",
-              schema: { type: "integer", default: 10 },
+              schema: { type: "integer", default: 20 },
               description: "Quantidade de itens por página",
             },
           ],
           responses: {
             200: {
-              description: "Lista de tarefas retornada com sucesso",
+              description: "Lista paginada de tarefas retornada com sucesso",
               content: {
                 "application/json": {
-                  schema: {
-                    type: "array",
-                    items: { $ref: "#/components/schemas/Todo" },
-                  },
+                  schema: { $ref: "#/components/schemas/TodoListResponse" },
                 },
               },
             },
@@ -172,6 +211,35 @@ const options: swaggerJsdoc.Options = {
                 "application/json": {
                   schema: { $ref: "#/components/schemas/Error" },
                 },
+              },
+            },
+          },
+        },
+      },
+      "/api/items/filter": {
+        get: {
+          summary: "Lista tarefas com filtros (title, description, completed)",
+          tags: ["To-Dos"],
+          parameters: [
+            { in: "query", name: "title", schema: { type: "string" } },
+            { in: "query", name: "description", schema: { type: "string" } },
+            { in: "query", name: "completed", schema: { type: "boolean" } },
+            { in: "query", name: "page", schema: { type: "integer", default: 1 } },
+            { in: "query", name: "limit", schema: { type: "integer", default: 20 } },
+          ],
+          responses: {
+            200: {
+              description: "Lista filtrada de tarefas retornada com sucesso",
+              content: {
+                "application/json": {
+                  schema: { $ref: "#/components/schemas/TodoListResponse" },
+                },
+              },
+            },
+            500: {
+              description: "Erro interno do servidor",
+              content: {
+                "application/json": { schema: { $ref: "#/components/schemas/Error" } },
               },
             },
           },
@@ -190,11 +258,11 @@ const options: swaggerJsdoc.Options = {
             },
           },
           responses: {
-            201: {
+            200: {
               description: "Tarefa criada com sucesso",
               content: {
                 "application/json": {
-                  schema: { $ref: "#/components/schemas/Todo" },
+                  schema: { $ref: "#/components/schemas/CreateToDoResponse" },
                 },
               },
             },
@@ -274,15 +342,7 @@ const options: swaggerJsdoc.Options = {
               description: "Tarefa removida com sucesso",
               content: {
                 "application/json": {
-                  schema: {
-                    type: "object",
-                    properties: {
-                      message: {
-                        type: "string",
-                        example: "Tarefa removida com sucesso",
-                      },
-                    },
-                  },
+                  schema: { $ref: "#/components/schemas/Todo" },
                 },
               },
             },
@@ -340,24 +400,7 @@ const options: swaggerJsdoc.Options = {
               description: "Tarefas atualizadas com sucesso",
               content: {
                 "application/json": {
-                  schema: {
-                    type: "object",
-                    properties: {
-                      message: {
-                        type: "string",
-                        example: "5 tarefas atualizadas com sucesso",
-                      },
-                      updated: {
-                        type: "integer",
-                        description: "Quantidade de tarefas atualizadas",
-                        example: 5,
-                      },
-                      todos: {
-                        type: "array",
-                        items: { $ref: "#/components/schemas/Todo" },
-                      },
-                    },
-                  },
+                  schema: { $ref: "#/components/schemas/BulkUpdateResponse" },
                 },
               },
             },
@@ -411,20 +454,7 @@ const options: swaggerJsdoc.Options = {
               description: "Tarefas removidas com sucesso",
               content: {
                 "application/json": {
-                  schema: {
-                    type: "object",
-                    properties: {
-                      message: {
-                        type: "string",
-                        example: "3 tarefas removidas com sucesso",
-                      },
-                      deleted: {
-                        type: "integer",
-                        description: "Quantidade de tarefas removidas",
-                        example: 3,
-                      },
-                    },
-                  },
+                  schema: { $ref: "#/components/schemas/BulkDeleteResponse" },
                 },
               },
             },

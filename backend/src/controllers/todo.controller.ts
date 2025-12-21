@@ -6,17 +6,45 @@ import {
   CreateToDoRequest,
 } from "../models/requests.model.js";
 
+const parseBoolean = (value?: string): boolean | undefined => {
+  if (value === "true") return true;
+  if (value === "false") return false;
+  return undefined;
+};
+
 export const getToDos = async (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
+    const completed = parseBoolean(req.query.completed as string);
 
-    const result = await toDoService.getToDosPaginated(page, limit);
+    const result = await toDoService.getToDosPaginated(page, limit, completed);
 
     res.json(result);
   } catch (e) {
     console.error(e);
 
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const getToDosFiltered = async (req: Request, res: Response) => {
+  try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 20;
+    const completed = parseBoolean(req.query.completed as string);
+
+    const filters: Partial<CreateToDoRequest & { completed?: boolean } & Record<string, any>> = {};
+
+    if (typeof completed !== "undefined") filters.completed = completed;
+    if (req.query.title) filters.title = String(req.query.title);
+    if (req.query.description) filters.description = String(req.query.description);
+
+    const result = await toDoService.getToDosFiltered(page, limit, filters as any);
+
+    res.json(result);
+  } catch (e) {
+    console.error(e);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
