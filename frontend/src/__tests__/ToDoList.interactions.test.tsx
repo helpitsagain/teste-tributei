@@ -79,6 +79,7 @@ describe("TodoList interactions", () => {
     fireEvent.change(textboxes[1], { target: { value: "New desc" } });
 
     fireEvent.click(screen.getByRole("button", { name: /^Create$/i }));
+    fireEvent.click(screen.getByRole("button", { name: /^Confirm$/i }));
 
     await waitFor(() => expect(toDoService.createToDo).toHaveBeenCalledWith({ title: "New title", description: "New desc" }));
   });
@@ -148,6 +149,7 @@ describe("TodoList interactions", () => {
     fireEvent.change(textboxes[1], { target: { value: "New desc" } });
 
     fireEvent.click(screen.getByRole("button", { name: /^Create$/i }));
+    fireEvent.click(screen.getByRole("button", { name: /^Confirm$/i }));
 
     await waitFor(() => expect(toDoService.createToDo).toHaveBeenCalled());
     await waitFor(() => expect(screen.getByText(/create-failed/i)).toBeInTheDocument());

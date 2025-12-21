@@ -115,6 +115,7 @@ const NewToDoModal: React.FC<NewToDoModalProps> = ({
               <h3>To-do created</h3>
               <p>Your to-do "{title}" was created successfully.</p>
             </div>
+            {!!error && <Error message={error} />}
             <div className="new-todo-modal__actions">
               <button onClick={handleAddAnother}>Add another</button>
               <button onClick={handleClose}>Close</button>
