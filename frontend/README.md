@@ -9,6 +9,7 @@ Interface de usuário para gerenciamento de tarefas (To-Do List) construída com
 - [Pré-requisitos](#pré-requisitos)
 - [Estrutura do Projeto](#estrutura-do-projeto)
 - [Instalação e Configuração](#instalação-e-configuração)
+- [Docker](#docker)
 - [Scripts Disponíveis](#scripts-disponíveis)
 - [Variáveis de Ambiente](#variáveis-de-ambiente)
 - [Componentes](#componentes)
@@ -65,6 +66,9 @@ frontend/
 │   └── types/               # Definições de tipos TypeScript
 ├── .env.development
 ├── .env.production
+├── Dockerfile               # Build de produção (multi-stage com Nginx)
+├── Dockerfile.dev           # Build de desenvolvimento
+├── nginx.conf               # Configuração do Nginx para produção
 ├── index.html
 ├── package.json
 ├── tsconfig.json
@@ -101,6 +105,48 @@ npm run dev
 ```
 
 A aplicação estará disponível em `http://localhost:3000` por padrão.
+
+## Docker
+
+O frontend pode ser executado em container Docker de forma isolada ou junto com o backend.
+
+### Arquivos Docker
+
+| Arquivo | Descrição |
+|---------|----------|
+| `Dockerfile` | Build de produção multi-stage com Nginx |
+| `Dockerfile.dev` | Build de desenvolvimento com hot-reload |
+| `nginx.conf` | Configuração do Nginx para servir a SPA |
+| `.dockerignore` | Arquivos ignorados no build |
+
+### Executando com Docker (isolado)
+
+```bash
+# Build da imagem de produção
+docker build -t tributei-frontend --build-arg VITE_API_BASE_URL=http://localhost:3001 .
+
+# Executar o container
+docker run -p 80:80 tributei-frontend
+```
+
+### Executando com Docker Compose (recomendado)
+
+Na raiz do projeto:
+
+```bash
+# Desenvolvimento (com hot-reload)
+docker compose -f docker-compose.dev.yml up frontend
+
+# Produção
+docker compose up frontend
+```
+
+### Portas
+
+| Ambiente | Porta |
+|----------|-------|
+| Desenvolvimento | `3000` |
+| Produção (Nginx) | `80` |
 
 ## Scripts Disponíveis
 
