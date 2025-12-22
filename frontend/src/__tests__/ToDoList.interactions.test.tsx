@@ -347,8 +347,8 @@ describe("TodoList interactions", () => {
 
     await screen.findByText("A");
 
-    const sortSelect = screen.getByTestId ? screen.getByRole("combobox") : document.getElementById("sort-by");
-    fireEvent.change(sortSelect!, { target: { value: "a-z" } });
+    const sortSelect = screen.getByRole("combobox");
+    fireEvent.change(sortSelect, { target: { value: "a-z" } });
 
     await waitFor(() => {
       expect(toDoService.getToDos).toHaveBeenCalledWith(1, 10, undefined, { sortBy: "title", sortOrder: "asc" });

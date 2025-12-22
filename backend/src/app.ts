@@ -37,6 +37,11 @@ app.get("/", (req, res) => {
   res.json({ message: "API funcionando!" });
 });
 
+// Health check para Docker
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
 // Rota principal
 app.use("/api", toDoRoutes);
 

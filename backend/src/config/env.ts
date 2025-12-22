@@ -1,18 +1,14 @@
 import dotenv from "dotenv";
 import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const envFile =
   process.env.NODE_ENV === "production"
     ? ".env.production"
     : ".env.development";
 
-// Carrega as variáveis de ambiente
+// Carrega as variáveis de ambiente - usa process.cwd() para pegar o diretório de trabalho
 dotenv.config({
-  path: path.resolve(__dirname, "../../", envFile),
+  path: path.resolve(process.cwd(), envFile),
 });
 
 export const env = {

@@ -113,7 +113,7 @@ const TodoList: React.FC = () => {
 
   const handleOpenFilters = () => setIsFiltersModalOpen(true);
 
-  const handleApplyFilters = (newFilters: {
+  const handleApplyFilters = (newFilters?: {
     title?: string;
     description?: string;
     completed?: boolean | null;
@@ -413,7 +413,7 @@ const TodoList: React.FC = () => {
                 onBlur={() => setIsSortOpen(false)}
                 onChange={handleSortChange}
               >
-                <option value="" selected disabled>
+                <option value="" disabled>
                   -- Sort by --
                 </option>
                 <option value="a-z">A-Z</option>

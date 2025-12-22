@@ -1,5 +1,4 @@
 import { neon } from "@neondatabase/serverless";
-import "dotenv/config";
 import { v4 as uuidv4 } from "uuid";
 import { ToDo } from "../models/todo.model.js";
 
