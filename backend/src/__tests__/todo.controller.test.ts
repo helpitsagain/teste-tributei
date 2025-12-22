@@ -44,7 +44,7 @@ describe("todo.controller", () => {
 
       await controller.getToDos(req, res);
 
-      expect(service.getToDosPaginated).toHaveBeenCalledWith(1, 20, undefined);
+      expect(service.getToDosPaginated).toHaveBeenCalledWith(1, 20, undefined, "updated_date", "desc");
       expect(res.json).toHaveBeenCalledWith({ success: true, data: mockResult });
     });
 
@@ -62,7 +62,7 @@ describe("todo.controller", () => {
 
       await controller.getToDos(req, res);
 
-      expect(service.getToDosPaginated).toHaveBeenCalledWith(2, 5, undefined);
+      expect(service.getToDosPaginated).toHaveBeenCalledWith(2, 5, undefined, "updated_date", "desc");
     });
 
     it("returns paginated todos with completed=true filter", async () => {
@@ -79,7 +79,7 @@ describe("todo.controller", () => {
 
       await controller.getToDos(req, res);
 
-      expect(service.getToDosPaginated).toHaveBeenCalledWith(1, 20, true);
+      expect(service.getToDosPaginated).toHaveBeenCalledWith(1, 20, true, "updated_date", "desc");
     });
 
     it("returns paginated todos with completed=false filter", async () => {
@@ -96,7 +96,7 @@ describe("todo.controller", () => {
 
       await controller.getToDos(req, res);
 
-      expect(service.getToDosPaginated).toHaveBeenCalledWith(1, 20, false);
+      expect(service.getToDosPaginated).toHaveBeenCalledWith(1, 20, false, "updated_date", "desc");
     });
 
     it("returns 500 on service error", async () => {
@@ -144,7 +144,7 @@ describe("todo.controller", () => {
         title: "Test",
         description: "desc",
         completed: true,
-      });
+      }, "updated_date", "desc");
       expect(res.json).toHaveBeenCalledWith({ success: true, data: mockResult });
     });
 
@@ -157,7 +157,7 @@ describe("todo.controller", () => {
 
       await controller.getToDosFiltered(req, res);
 
-      expect(service.getToDosFiltered).toHaveBeenCalledWith(1, 20, { title: "Search" });
+      expect(service.getToDosFiltered).toHaveBeenCalledWith(1, 20, { title: "Search" }, "updated_date", "desc");
     });
 
     it("returns filtered todos with only description filter", async () => {
@@ -169,7 +169,7 @@ describe("todo.controller", () => {
 
       await controller.getToDosFiltered(req, res);
 
-      expect(service.getToDosFiltered).toHaveBeenCalledWith(1, 20, { description: "search" });
+      expect(service.getToDosFiltered).toHaveBeenCalledWith(1, 20, { description: "search" }, "updated_date", "desc");
     });
 
     it("returns 500 on service error", async () => {

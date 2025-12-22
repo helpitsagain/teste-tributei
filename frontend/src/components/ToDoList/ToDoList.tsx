@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { ToDo } from "../../types/toDo";
+import { ToDo, SortOption } from "../../types/toDo";
 import {
   bulkUpdateToDos,
   getToDos,
@@ -17,6 +17,15 @@ import NewToDoModal from "../NewToDoModal/NewToDoModal";
 import FiltersModal from "../FiltersModal/FiltersModal";
 import "./ToDoList.scss";
 import axios from "axios";
+
+const SORT_OPTIONS: Record<string, SortOption> = {
+  "a-z": { sortBy: "title", sortOrder: "asc" },
+  "z-a": { sortBy: "title", sortOrder: "desc" },
+  "created-desc": { sortBy: "created_date", sortOrder: "desc" },
+  "created-asc": { sortBy: "created_date", sortOrder: "asc" },
+  "updated-desc": { sortBy: "updated_date", sortOrder: "desc" },
+  "updated-asc": { sortBy: "updated_date", sortOrder: "asc" },
+};
 
 const PAGE_LIMIT = 10;
 
@@ -37,6 +46,8 @@ const TodoList: React.FC = () => {
   >(undefined);
   const [isListEmpty, setIsListEmpty] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
+  const [sortKey, setSortKey] = useState<string>("");
+  const [sort, setSort] = useState<SortOption | undefined>(undefined);
 
   const initialLoadRef = useRef(false);
 
@@ -48,16 +59,19 @@ const TodoList: React.FC = () => {
         description?: string;
         completed?: boolean | null;
       },
+      overrideSort?: SortOption,
     ) => {
       if (loading) return;
       setLoading(true);
       setError(null);
       try {
         const usedFilters = overrideFilters ?? filters;
+        const usedSort = overrideSort ?? sort;
         const { data: response } = await getToDos(
           pageToLoad,
           PAGE_LIMIT,
           usedFilters,
+          usedSort,
         );
 
         setToDos((prev) => {
@@ -94,12 +108,12 @@ const TodoList: React.FC = () => {
         setLoading(false);
       }
     },
-    [loading, filters],
+    [loading, filters, sort],
   );
 
   const handleOpenFilters = () => setIsFiltersModalOpen(true);
 
-  const handleApplyFilters = (newFilters: {
+  const handleApplyFilters = (newFilters?: {
     title?: string;
     description?: string;
     completed?: boolean | null;
@@ -121,6 +135,30 @@ const TodoList: React.FC = () => {
     setIsListEmpty(true);
     setIsFiltersModalOpen(false);
     loadToDos(1, {});
+  };
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    setSortKey(value);
+    setIsSortOpen(false);
+    
+    if (!value) {
+      setSort(undefined);
+      setToDos([]);
+      setPage(1);
+      setHasMore(true);
+      loadToDos(1, filters, undefined);
+      return;
+    }
+    
+    const newSort = SORT_OPTIONS[value];
+    if (newSort) {
+      setSort(newSort);
+      setToDos([]);
+      setPage(1);
+      setHasMore(true);
+      loadToDos(1, filters, newSort);
+    }
   };
 
   const handleSelectTodo = (id: string) => {
@@ -362,40 +400,39 @@ const TodoList: React.FC = () => {
               </button>
             )}
           </div>
-          {/* TODO: descomentar após implementar sort-by  */}
-
-          {/* <div className="todo-list__actions__bottom__sort"> */}
-          {/*   <label htmlFor="sort-by" style={{ display: "none" }}> */}
-          {/*     Sort by */}
-          {/*   </label> */}
-          {/*   <div className={"select-wrapper" + (isSortOpen ? " is-open" : "")}> */}
-          {/*     <select */}
-          {/*       id="sort-by" */}
-          {/*       name="sort-by" */}
-          {/*       onMouseDown={() => setIsSortOpen(true)} */}
-          {/*       onBlur={() => setIsSortOpen(false)} */}
-          {/*       onChange={() => setIsSortOpen(false)} */}
-          {/*     > */}
-          {/*       <option value="" selected disabled> */}
-          {/*         -- Sort by -- */}
-          {/*       </option> */}
-          {/*       <option value="a-z">A-Z</option> */}
-          {/*       <option value="z-a">Z-A</option> */}
-          {/*       <option value="created-desc"> */}
-          {/*         Created date (newer to older) */}
-          {/*       </option> */}
-          {/*       <option value="created-asc"> */}
-          {/*         Created date (older to newer) */}
-          {/*       </option> */}
-          {/*       <option value="updated-desc"> */}
-          {/*         Updated date (newer to older) */}
-          {/*       </option> */}
-          {/*       <option value="updated-asc"> */}
-          {/*         Updated date (older to newer) */}
-          {/*       </option> */}
-          {/*     </select> */}
-          {/*   </div> */}
-          {/* </div> */}
+          <div className="todo-list__actions__bottom__sort">
+            <label htmlFor="sort-by" style={{ display: "none" }}>
+              Sort by
+            </label>
+            <div className={"select-wrapper" + (isSortOpen ? " is-open" : "")}>
+              <select
+                id="sort-by"
+                name="sort-by"
+                value={sortKey}
+                onMouseDown={() => setIsSortOpen(true)}
+                onBlur={() => setIsSortOpen(false)}
+                onChange={handleSortChange}
+              >
+                <option value="" disabled>
+                  -- Sort by --
+                </option>
+                <option value="a-z">A-Z</option>
+                <option value="z-a">Z-A</option>
+                <option value="created-desc">
+                  Created date (newer to older)
+                </option>
+                <option value="created-asc">
+                  Created date (older to newer)
+                </option>
+                <option value="updated-desc">
+                  Updated date (newer to older)
+                </option>
+                <option value="updated-asc">
+                  Updated date (older to newer)
+                </option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
 

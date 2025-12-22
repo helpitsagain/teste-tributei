@@ -1,5 +1,5 @@
 import api from "./api";
-import { ToDo, ToDosResponse } from "../types/toDo";
+import { ToDo, ToDosResponse, SortOption } from "../types/toDo";
 
 export const getToDos = async (
   page: number,
@@ -9,6 +9,7 @@ export const getToDos = async (
     description?: string;
     completed?: boolean | null;
   },
+  sort?: SortOption,
 ): Promise<ToDosResponse> => {
   const params: any = { page, limit };
 
@@ -17,6 +18,11 @@ export const getToDos = async (
     if (filters.description) params.description = filters.description;
     if (typeof filters.completed === "boolean")
       params.completed = filters.completed;
+  }
+
+  if (sort) {
+    params.sortBy = sort.sortBy;
+    params.sortOrder = sort.sortOrder;
   }
 
   // use the filter endpoint when any filter is provided

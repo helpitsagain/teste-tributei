@@ -5,9 +5,11 @@ export const getToDosPaginated = async (
   page: number,
   limit: number,
   completed?: boolean,
+  sortBy: string = 'updated_date',
+  sortOrder: string = 'desc',
 ) => {
   try {
-    const result = await sql.getToDosPaginated(page, limit, completed);
+    const result = await sql.getToDosPaginated(page, limit, completed, sortBy, sortOrder);
     return result;
   } catch (e) {
     console.error("Service error (getToDosPaginated):", e);
@@ -19,9 +21,11 @@ export const getToDosFiltered = async (
   page: number,
   limit: number,
   filters?: Partial<ToDo>,
+  sortBy: string = 'updated_date',
+  sortOrder: string = 'desc',
 ) => {
   try {
-    const result = await sql.getToDosFiltered(page, limit, filters as any);
+    const result = await sql.getToDosFiltered(page, limit, filters as any, sortBy, sortOrder);
     return result;
   } catch (e) {
     console.error("Service error (getToDosFiltered):", e);

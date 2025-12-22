@@ -10,7 +10,7 @@ interface Filters {
 
 interface FiltersModalProps {
   onConfirm: (filters: Filters | undefined) => void;
-  onClearFilters: () => {};
+  onClearFilters: () => void;
   onCancel: () => void;
   error?: any;
 }
