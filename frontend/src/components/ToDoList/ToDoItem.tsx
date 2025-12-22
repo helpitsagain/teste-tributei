@@ -8,6 +8,7 @@ interface TodoItemProps {
   isSelected: boolean;
   onSelect: (id: string) => void;
   onUpdate: (todo: ToDo) => void;
+  onDelete: (id: string) => void;
 }
 
 const TodoItem: React.FC<TodoItemProps> = ({
@@ -15,6 +16,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
   isSelected,
   onSelect,
   onUpdate,
+  onDelete,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -24,6 +26,11 @@ const TodoItem: React.FC<TodoItemProps> = ({
 
   const handleSave = (updatedTodo: ToDo) => {
     onUpdate(updatedTodo);
+    setIsEditing(false);
+  };
+
+  const handleDelete = (id: string) => {
+    onDelete(id);
     setIsEditing(false);
   };
 
@@ -54,6 +61,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
           todo={todo}
           onSave={handleSave}
           onCancel={() => setIsEditing(false)}
+          onDelete={handleDelete}
         />
       ) : (
         <div

@@ -7,6 +7,7 @@ import {
   updateToDo,
   bulkDeleteToDos,
   createToDo,
+  deleteToDo,
 } from "../../services/toDoService";
 import TodoItem from "./ToDoItem";
 import BulkActionModal from "../BulkActionModal/BulkActionModal";
@@ -163,6 +164,29 @@ const TodoList: React.FC = () => {
         setError(e.response?.data?.error ?? "Failed to update to-dos.");
       } else {
         setError(String(e) || "Failed to update to-dos.");
+      }
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteToDo(id);
+
+      const remainingToDos = toDos.filter((toDo) => toDo.id !== id);
+      setToDos(remainingToDos);
+      setSelectedToDos((prev) => prev.filter((sid) => sid !== id));
+
+      if (remainingToDos.length === 0) {
+        setPage(1);
+        setIsListEmpty(true);
+      }
+    } catch (e: any) {
+      console.error(e);
+
+      if (axios.isAxiosError(e)) {
+        setError(e.response?.data?.error ?? "Failed to delete to-do.");
+      } else {
+        setError(String(e) || "Failed to delete to-do.");
       }
     }
   };
@@ -385,6 +409,7 @@ const TodoList: React.FC = () => {
             isSelected={selectedToDos.includes(todo.id)}
             onSelect={handleSelectTodo}
             onUpdate={handleUpdateTodo}
+            onDelete={handleDelete}
           />
         ))}
       </InfiniteScroll>

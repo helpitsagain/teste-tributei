@@ -56,12 +56,16 @@
     button {
       flex: 1;
 
-      &:first-child {
+      &#save {
         @include button-success;
       }
 
-      &:last-child {
+      &#cancel {
         @include button-secondary;
+      }
+
+      &#delete {
+        @include button-danger;
       }
     }
   }

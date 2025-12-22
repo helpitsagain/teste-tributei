@@ -4,18 +4,28 @@ import { ToDo, ToDosResponse } from "../types/toDo";
 export const getToDos = async (
   page: number,
   limit: number = 5,
-  filters?: { title?: string; description?: string; completed?: boolean | null },
+  filters?: {
+    title?: string;
+    description?: string;
+    completed?: boolean | null;
+  },
 ): Promise<ToDosResponse> => {
   const params: any = { page, limit };
 
   if (filters) {
     if (filters.title) params.title = filters.title;
     if (filters.description) params.description = filters.description;
-    if (typeof filters.completed === "boolean") params.completed = filters.completed;
+    if (typeof filters.completed === "boolean")
+      params.completed = filters.completed;
   }
 
   // use the filter endpoint when any filter is provided
-  if (filters && (filters.title || filters.description || typeof filters.completed === "boolean")) {
+  if (
+    filters &&
+    (filters.title ||
+      filters.description ||
+      typeof filters.completed === "boolean")
+  ) {
     const res = await api.get("items/filter", { params });
     return res.data;
   }
@@ -46,7 +56,7 @@ export const createToDo = async (newToDo: Partial<ToDo>): Promise<ToDo> => {
 };
 
 export const deleteToDo = async (id: string): Promise<ToDo> => {
-  const res = await api.delete(`item/delete/${id}`);
+  const res = await api.delete(`item/${id}`);
   return res.data;
 };
 
