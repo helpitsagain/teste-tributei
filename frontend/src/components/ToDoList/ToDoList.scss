@@ -63,8 +63,8 @@
       }
 
       &__filters {
-        width: 100%;
-        // width: 67%; TODO: substituir após implementar sort by
+        // width: 100%;
+        width: 67%; // TODO: substituir após implementar sort by
         display: flex;
         gap: $spacing-sm;
 

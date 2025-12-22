@@ -146,6 +146,48 @@ describe("toDoService additional endpoints", () => {
     expect(res).toEqual(mockResponse.data);
   });
 
+  it("getToDos includes sort params when provided", async () => {
+    const toDoService = await vi.importActual<typeof toDoServiceModule>("../services/toDoService");
+
+    const mockResponse = { data: { toDos: [], page: 1, totalPages: 1 } };
+    (api.get as Mock).mockResolvedValueOnce(mockResponse);
+
+    const res = await toDoService.getToDos(1, 10, undefined, { sortBy: "title", sortOrder: "asc" });
+
+    expect(api.get).toHaveBeenCalledWith("items", {
+      params: { page: 1, limit: 10, sortBy: "title", sortOrder: "asc" },
+    });
+    expect(res).toEqual(mockResponse.data);
+  });
+
+  it("getToDos includes sort params with filters", async () => {
+    const toDoService = await vi.importActual<typeof toDoServiceModule>("../services/toDoService");
+
+    const mockResponse = { data: { toDos: [], page: 1, totalPages: 1 } };
+    (api.get as Mock).mockResolvedValueOnce(mockResponse);
+
+    const res = await toDoService.getToDos(1, 10, { title: "test" }, { sortBy: "created_date", sortOrder: "desc" });
+
+    expect(api.get).toHaveBeenCalledWith("items/filter", {
+      params: { page: 1, limit: 10, title: "test", sortBy: "created_date", sortOrder: "desc" },
+    });
+    expect(res).toEqual(mockResponse.data);
+  });
+
+  it("getToDos sorts by updated_date desc", async () => {
+    const toDoService = await vi.importActual<typeof toDoServiceModule>("../services/toDoService");
+
+    const mockResponse = { data: { toDos: [], page: 1, totalPages: 1 } };
+    (api.get as Mock).mockResolvedValueOnce(mockResponse);
+
+    const res = await toDoService.getToDos(1, 10, {}, { sortBy: "updated_date", sortOrder: "desc" });
+
+    expect(api.get).toHaveBeenCalledWith("items", {
+      params: { page: 1, limit: 10, sortBy: "updated_date", sortOrder: "desc" },
+    });
+    expect(res).toEqual(mockResponse.data);
+  });
+
   it("bulkUpdateToDos calls api.put and returns data", async () => {
     const toDoService = await vi.importActual<typeof toDoServiceModule>("../services/toDoService");
 

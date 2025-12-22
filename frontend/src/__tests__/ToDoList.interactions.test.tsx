@@ -167,8 +167,7 @@ describe("TodoList interactions", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Filters" }));
 
-    // Modal should be open - check for combobox (status select)
-    await waitFor(() => expect(screen.getByRole("combobox")).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText("Filters", { selector: "h2" })).toBeInTheDocument());
 
     const textInputs = screen.getAllByRole("textbox");
     fireEvent.change(textInputs[0], { target: { value: "Test" } });
@@ -176,7 +175,7 @@ describe("TodoList interactions", () => {
     fireEvent.click(screen.getByText("Apply"));
 
     await waitFor(() => {
-      expect(toDoService.getToDos).toHaveBeenCalledWith(1, 10, { title: "Test" });
+      expect(toDoService.getToDos).toHaveBeenCalledWith(1, 10, { title: "Test" }, undefined);
     });
   });
 
@@ -192,7 +191,7 @@ describe("TodoList interactions", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Filters" }));
 
-    await waitFor(() => expect(screen.getByRole("combobox")).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText("Filters", { selector: "h2" })).toBeInTheDocument());
 
     const textInputs = screen.getAllByRole("textbox");
     fireEvent.change(textInputs[0], { target: { value: "Test" } });
@@ -214,14 +213,14 @@ describe("TodoList interactions", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Filters" }));
 
-    await waitFor(() => expect(screen.getByRole("combobox")).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText("Filters", { selector: "h2" })).toBeInTheDocument());
 
     const textInputs = screen.getAllByRole("textbox");
     fireEvent.change(textInputs[0], { target: { value: "Test" } });
 
     fireEvent.click(screen.getByText("Cancel"));
 
-    await waitFor(() => expect(screen.queryByRole("combobox")).not.toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByText("Filters", { selector: "h2" })).not.toBeInTheDocument());
   });
 
   it("deselects individual items when clicked again", async () => {
@@ -337,5 +336,103 @@ describe("TodoList interactions", () => {
     fireEvent.click(screen.getByText(/Confirm$/i));
 
     await waitFor(() => expect(toDoService.bulkDeleteToDos).toHaveBeenCalledWith(["1", "2"]));
+  });
+
+  it("changes sort order when selecting A-Z", async () => {
+    mockedService.getToDos
+      .mockResolvedValueOnce({ success: true, data: { toDos: mockToDos, total: 2, page: 1, totalPages: 1 } })
+      .mockResolvedValueOnce({ success: true, data: { toDos: mockToDos, total: 2, page: 1, totalPages: 1 } });
+
+    render(<TodoList />);
+
+    await screen.findByText("A");
+
+    const sortSelect = screen.getByTestId ? screen.getByRole("combobox") : document.getElementById("sort-by");
+    fireEvent.change(sortSelect!, { target: { value: "a-z" } });
+
+    await waitFor(() => {
+      expect(toDoService.getToDos).toHaveBeenCalledWith(1, 10, undefined, { sortBy: "title", sortOrder: "asc" });
+    });
+  });
+
+  it("changes sort order when selecting Z-A", async () => {
+    mockedService.getToDos
+      .mockResolvedValueOnce({ success: true, data: { toDos: mockToDos, total: 2, page: 1, totalPages: 1 } })
+      .mockResolvedValueOnce({ success: true, data: { toDos: mockToDos, total: 2, page: 1, totalPages: 1 } });
+
+    render(<TodoList />);
+
+    await screen.findByText("A");
+
+    const sortSelect = screen.getByRole("combobox");
+    fireEvent.change(sortSelect, { target: { value: "z-a" } });
+
+    await waitFor(() => {
+      expect(toDoService.getToDos).toHaveBeenCalledWith(1, 10, undefined, { sortBy: "title", sortOrder: "desc" });
+    });
+  });
+
+  it("changes sort order when selecting created date newer to older", async () => {
+    mockedService.getToDos
+      .mockResolvedValueOnce({ success: true, data: { toDos: mockToDos, total: 2, page: 1, totalPages: 1 } })
+      .mockResolvedValueOnce({ success: true, data: { toDos: mockToDos, total: 2, page: 1, totalPages: 1 } });
+
+    render(<TodoList />);
+
+    await screen.findByText("A");
+
+    const sortSelect = screen.getByRole("combobox");
+    fireEvent.change(sortSelect, { target: { value: "created-desc" } });
+
+    await waitFor(() => {
+      expect(toDoService.getToDos).toHaveBeenCalledWith(1, 10, undefined, { sortBy: "created_date", sortOrder: "desc" });
+    });
+  });
+
+  it("changes sort order when selecting updated date older to newer", async () => {
+    mockedService.getToDos
+      .mockResolvedValueOnce({ success: true, data: { toDos: mockToDos, total: 2, page: 1, totalPages: 1 } })
+      .mockResolvedValueOnce({ success: true, data: { toDos: mockToDos, total: 2, page: 1, totalPages: 1 } });
+
+    render(<TodoList />);
+
+    await screen.findByText("A");
+
+    const sortSelect = screen.getByRole("combobox");
+    fireEvent.change(sortSelect, { target: { value: "updated-asc" } });
+
+    await waitFor(() => {
+      expect(toDoService.getToDos).toHaveBeenCalledWith(1, 10, undefined, { sortBy: "updated_date", sortOrder: "asc" });
+    });
+  });
+
+  it("maintains sort when applying filters", async () => {
+    mockedService.getToDos
+      .mockResolvedValueOnce({ success: true, data: { toDos: mockToDos, total: 2, page: 1, totalPages: 1 } })
+      .mockResolvedValueOnce({ success: true, data: { toDos: mockToDos, total: 2, page: 1, totalPages: 1 } })
+      .mockResolvedValueOnce({ success: true, data: { toDos: mockToDos, total: 2, page: 1, totalPages: 1 } });
+
+    render(<TodoList />);
+
+    await screen.findByText("A");
+
+    const sortSelect = screen.getByRole("combobox");
+    fireEvent.change(sortSelect, { target: { value: "a-z" } });
+
+    await waitFor(() => {
+      expect(toDoService.getToDos).toHaveBeenCalledWith(1, 10, undefined, { sortBy: "title", sortOrder: "asc" });
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Filters" }));
+    
+    await waitFor(() => expect(screen.getAllByRole("combobox").length).toBeGreaterThan(1));
+
+    const textInputs = screen.getAllByRole("textbox");
+    fireEvent.change(textInputs[0], { target: { value: "Test" } });
+    fireEvent.click(screen.getByText("Apply"));
+
+    await waitFor(() => {
+      expect(toDoService.getToDos).toHaveBeenCalledWith(1, 10, { title: "Test" }, { sortBy: "title", sortOrder: "asc" });
+    });
   });
 });

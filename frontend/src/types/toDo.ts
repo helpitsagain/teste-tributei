@@ -14,3 +14,11 @@ export interface ToDosResponse {
     totalPages: number;
   };
 }
+
+export type SortByField = 'title' | 'created_date' | 'updated_date';
+export type SortOrder = 'asc' | 'desc';
+
+export interface SortOption {
+  sortBy: SortByField;
+  sortOrder: SortOrder;
+}
