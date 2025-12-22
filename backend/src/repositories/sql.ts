@@ -16,18 +16,32 @@ export const getToDos = async () => {
   }
 };
 
+const ALLOWED_SORT_COLUMNS = ['title', 'created_date', 'updated_date'];
+const ALLOWED_SORT_ORDERS = ['asc', 'desc'];
+
+const getSortClause = (sortBy: string, sortOrder: string): string => {
+  const column = ALLOWED_SORT_COLUMNS.includes(sortBy) ? sortBy : 'updated_date';
+  const order = ALLOWED_SORT_ORDERS.includes(sortOrder.toLowerCase()) ? sortOrder.toUpperCase() : 'DESC';
+  return `ORDER BY ${column} ${order}`;
+};
+
 export const getToDosPaginated = async (
   page: number,
   limit: number,
   completed?: boolean,
+  sortBy: string = 'updated_date',
+  sortOrder: string = 'desc',
 ) => {
   try {
     const offset = (page - 1) * limit;
     const hasFilter = typeof completed === "boolean";
+    const orderClause = getSortClause(sortBy, sortOrder);
 
-    const toDos = hasFilter
-      ? await sql`SELECT id, title, description, completed, created_date, updated_date FROM todos WHERE completed = ${completed} ORDER BY updated_date DESC LIMIT ${limit} OFFSET ${offset};`
-      : await sql`SELECT id, title, description, completed, created_date, updated_date FROM todos ORDER BY updated_date DESC LIMIT ${limit} OFFSET ${offset};`;
+    const query = hasFilter
+      ? `SELECT id, title, description, completed, created_date, updated_date FROM todos WHERE completed = ${completed} ${orderClause} LIMIT ${limit} OFFSET ${offset};`
+      : `SELECT id, title, description, completed, created_date, updated_date FROM todos ${orderClause} LIMIT ${limit} OFFSET ${offset};`;
+
+    const toDos = await sql.query(query);
 
     const countResult = hasFilter
       ? await sql`SELECT COUNT(*)::text AS count FROM todos WHERE completed = ${completed};`
@@ -51,9 +65,12 @@ export const getToDosFiltered = async (
   page: number,
   limit: number,
   filters?: Partial<ToDo>,
+  sortBy: string = 'updated_date',
+  sortOrder: string = 'desc',
 ) => {
   try {
     const offset = (page - 1) * limit;
+    const orderClause = getSortClause(sortBy, sortOrder);
 
     const escape = (s: string) => s.replace(/'/g, "''");
 
@@ -72,7 +89,7 @@ export const getToDosFiltered = async (
 
     const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
 
-    const query = `SELECT id, title, description, completed, created_date, updated_date FROM todos ${where} ORDER BY updated_date DESC LIMIT ${limit} OFFSET ${offset};`;
+    const query = `SELECT id, title, description, completed, created_date, updated_date FROM todos ${where} ${orderClause} LIMIT ${limit} OFFSET ${offset};`;
 
     const countQuery = `SELECT COUNT(*)::text AS count FROM todos ${where};`;
 

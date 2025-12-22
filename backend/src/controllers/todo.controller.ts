@@ -17,8 +17,10 @@ export const getToDos = async (req: Request, res: Response) => {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
     const completed = parseBoolean(req.query.completed as string);
+    const sortBy = (req.query.sortBy as string) || 'updated_date';
+    const sortOrder = (req.query.sortOrder as string) || 'desc';
 
-    const result = await toDoService.getToDosPaginated(page, limit, completed);
+    const result = await toDoService.getToDosPaginated(page, limit, completed, sortBy, sortOrder);
 
     res.json({ success: true, data: result });
   } catch (e) {
@@ -33,6 +35,8 @@ export const getToDosFiltered = async (req: Request, res: Response) => {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
     const completed = parseBoolean(req.query.completed as string);
+    const sortBy = (req.query.sortBy as string) || 'updated_date';
+    const sortOrder = (req.query.sortOrder as string) || 'desc';
 
     const filters: Partial<CreateToDoRequest & Record<string, any>> = {};
 
@@ -45,6 +49,8 @@ export const getToDosFiltered = async (req: Request, res: Response) => {
       page,
       limit,
       filters as any,
+      sortBy,
+      sortOrder,
     );
 
     res.json({ success: true, data: result });
