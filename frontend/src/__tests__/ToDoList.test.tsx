@@ -15,9 +15,12 @@ describe("TodoList", () => {
   beforeEach(() => {
     const mockedService = vi.mocked(toDoService);
     mockedService.getToDos.mockResolvedValue({
-      toDos: mockToDos,
-      page: 1,
-      totalPages: 1,
+      success: true,
+      data: {
+        toDos: mockToDos,
+        page: 1,
+        totalPages: 1,
+      },
     });
     mockedService.bulkUpdateToDos.mockResolvedValue({});
     mockedService.bulkDeleteToDos.mockResolvedValue({});

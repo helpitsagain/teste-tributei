@@ -16,9 +16,12 @@ describe("TodoList interactions", () => {
 
   beforeEach(() => {
     mockedService.getToDos.mockResolvedValue({
-      toDos: mockToDos,
-      page: 1,
-      totalPages: 1,
+      success: true,
+      data: {
+        toDos: mockToDos,
+        page: 1,
+        totalPages: 1,
+      },
     });
 
     mockedService.bulkUpdateToDos.mockResolvedValue({ updatedToDos: [] });
@@ -34,7 +37,7 @@ describe("TodoList interactions", () => {
   it("shows error and retries when getToDos fails", async () => {
     mockedService.getToDos
       .mockRejectedValueOnce(new Error("boom"))
-      .mockResolvedValueOnce({ toDos: [], page: 1, totalPages: 1 });
+      .mockResolvedValueOnce({ success: true, data: { toDos: [], page: 1, totalPages: 1 } });
 
     render(<TodoList />);
 
@@ -119,8 +122,8 @@ describe("TodoList interactions", () => {
     const page2 = [ { id: "2", title: "P2-1", description: "", completed: false } ];
 
     mockedService.getToDos
-      .mockResolvedValueOnce({ toDos: page1, page: 1, totalPages: 2 })
-      .mockResolvedValueOnce({ toDos: page2, page: 2, totalPages: 2 });
+      .mockResolvedValueOnce({ success: true, data: { toDos: page1, page: 1, totalPages: 2 } })
+      .mockResolvedValueOnce({ success: true, data: { toDos: page2, page: 2, totalPages: 2 } });
 
     render(<TodoList />);
 

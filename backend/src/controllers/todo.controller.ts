@@ -20,7 +20,7 @@ export const getToDos = async (req: Request, res: Response) => {
 
     const result = await toDoService.getToDosPaginated(page, limit, completed);
 
-    res.json({ success: true, data: { toDos: result } });
+    res.json({ success: true, data: result });
   } catch (e) {
     console.error(e);
 
@@ -47,7 +47,7 @@ export const getToDosFiltered = async (req: Request, res: Response) => {
       filters as any,
     );
 
-    res.json({ success: true, data: { toDos: result } });
+    res.json({ success: true, data: result });
   } catch (e) {
     console.error(e);
     res.status(500).json({ success: false, message: "Internal Server Error" });

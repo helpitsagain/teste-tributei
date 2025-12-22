@@ -57,7 +57,7 @@ describe("toDoService additional endpoints", () => {
 
     const res = await toDoService.deleteToDo("3");
 
-    expect(api.delete).toHaveBeenCalledWith(`item/delete/3`);
+    expect(api.delete).toHaveBeenCalledWith(`item/3`);
     expect(res).toEqual(mockResponse.data);
   });
 

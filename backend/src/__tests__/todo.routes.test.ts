@@ -24,7 +24,7 @@ describe("todo.routes", () => {
 
     expect(res.status).toBe(200);
     expect(res.body.data).toHaveProperty("toDos");
-    expect(res.body.data.toDos.toDos).toHaveLength(1);
+    expect(res.body.data.toDos).toHaveLength(1);
   });
 
   it("POST /api/item/new creates a todo", async () => {

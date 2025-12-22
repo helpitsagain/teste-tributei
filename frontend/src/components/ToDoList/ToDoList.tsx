@@ -36,6 +36,7 @@ const TodoList: React.FC = () => {
     | undefined
   >(undefined);
   const [isListEmpty, setIsListEmpty] = useState(false);
+  const [isSortOpen, setIsSortOpen] = useState(false);
 
   const initialLoadRef = useRef(false);
 
@@ -53,7 +54,11 @@ const TodoList: React.FC = () => {
       setError(null);
       try {
         const usedFilters = overrideFilters ?? filters;
-        const response = await getToDos(pageToLoad, PAGE_LIMIT, usedFilters);
+        const { data: response } = await getToDos(
+          pageToLoad,
+          PAGE_LIMIT,
+          usedFilters,
+        );
 
         setToDos((prev) => {
           const existingIds = new Set(prev.map((toDo) => toDo.id));
@@ -93,7 +98,6 @@ const TodoList: React.FC = () => {
   );
 
   const handleOpenFilters = () => setIsFiltersModalOpen(true);
-  const [isSortOpen, setIsSortOpen] = useState(false);
 
   const handleApplyFilters = (newFilters: {
     title?: string;

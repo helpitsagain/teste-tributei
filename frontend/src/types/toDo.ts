@@ -6,8 +6,11 @@ export interface ToDo {
 }
 
 export interface ToDosResponse {
-  toDos: ToDo[];
-  total: number;
-  page: number;
-  totalPages: number;
+  success: boolean;
+  data: {
+    toDos: ToDo[];
+    total: number;
+    page: number;
+    totalPages: number;
+  };
 }
