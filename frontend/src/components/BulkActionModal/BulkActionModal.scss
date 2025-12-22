@@ -47,6 +47,40 @@
         &:last-child {
           border-bottom: none;
         }
+        &.bulk-action-modal__more-link {
+          cursor: pointer;
+          color: $warning-color;
+          font-weight: 600;
+          padding-top: $spacing-sm;
+        }
+      }
+    }
+
+    .bulk-action-modal__more-textbox {
+      position: relative;
+      background-color: #fff;
+      border: 1px solid $border-color;
+      border-radius: $border-radius-sm;
+      padding: $spacing-sm;
+      max-height: 200px;
+      overflow: hidden;
+
+      .bulk-action-modal__more-close {
+        position: absolute;
+        right: 6px;
+        top: 6px;
+        background: transparent;
+        border: none;
+        font-size: 18px;
+        line-height: 1;
+        cursor: pointer;
+      }
+
+      .bulk-action-modal__more-content {
+        max-height: 168px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        padding-right: $spacing-sm;
       }
     }
   }
