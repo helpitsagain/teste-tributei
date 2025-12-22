@@ -1,5 +1,6 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, Mock } from "vitest";
 import api from "../services/api";
+import * as toDoServiceModule from "../services/toDoService";
 
 vi.mock("../services/api", () => {
   return {
@@ -14,10 +15,10 @@ vi.mock("../services/api", () => {
 
 describe("toDoService additional endpoints", () => {
   it("updateToDo calls api.put and returns data", async () => {
-    const toDoService = await vi.importActual("../services/toDoService");
+    const toDoService = await vi.importActual<typeof toDoServiceModule>("../services/toDoService");
 
     const mockResponse = { data: { id: "1", title: "x" } };
-    (api.put as unknown as vi.Mock).mockResolvedValueOnce(mockResponse);
+    (api.put as Mock).mockResolvedValueOnce(mockResponse);
 
     const res = await toDoService.updateToDo("1", { title: "x" });
 
@@ -26,10 +27,10 @@ describe("toDoService additional endpoints", () => {
   });
 
   it("bulkUpdateToDos calls api.put and returns data", async () => {
-    const toDoService = await vi.importActual("../services/toDoService");
+    const toDoService = await vi.importActual<typeof toDoServiceModule>("../services/toDoService");
 
     const mockResponse = { data: { updatedToDos: [] } };
-    (api.put as unknown as vi.Mock).mockResolvedValueOnce(mockResponse);
+    (api.put as Mock).mockResolvedValueOnce(mockResponse);
 
     const res = await toDoService.bulkUpdateToDos(["1", "2"], { completed: true });
 
@@ -38,10 +39,10 @@ describe("toDoService additional endpoints", () => {
   });
 
   it("createToDo calls api.post and returns data", async () => {
-    const toDoService = await vi.importActual("../services/toDoService");
+    const toDoService = await vi.importActual<typeof toDoServiceModule>("../services/toDoService");
 
     const mockResponse = { data: { id: "3", title: "new" } };
-    (api.post as unknown as vi.Mock).mockResolvedValueOnce(mockResponse);
+    (api.post as Mock).mockResolvedValueOnce(mockResponse);
 
     const res = await toDoService.createToDo({ title: "new" });
 
@@ -50,10 +51,10 @@ describe("toDoService additional endpoints", () => {
   });
 
   it("deleteToDo calls api.delete and returns data", async () => {
-    const toDoService = await vi.importActual("../services/toDoService");
+    const toDoService = await vi.importActual<typeof toDoServiceModule>("../services/toDoService");
 
     const mockResponse = { data: { id: "3" } };
-    (api.delete as unknown as vi.Mock).mockResolvedValueOnce(mockResponse);
+    (api.delete as Mock).mockResolvedValueOnce(mockResponse);
 
     const res = await toDoService.deleteToDo("3");
 
@@ -62,10 +63,10 @@ describe("toDoService additional endpoints", () => {
   });
 
   it("bulkDeleteToDos calls api.delete and returns data", async () => {
-    const toDoService = await vi.importActual("../services/toDoService");
+    const toDoService = await vi.importActual<typeof toDoServiceModule>("../services/toDoService");
 
     const mockResponse = { data: { deletedToDos: [] } };
-    (api.delete as unknown as vi.Mock).mockResolvedValueOnce(mockResponse);
+    (api.delete as Mock).mockResolvedValueOnce(mockResponse);
 
     const res = await toDoService.bulkDeleteToDos(["1"]);
 

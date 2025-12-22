@@ -19,6 +19,7 @@ describe("TodoList interactions", () => {
       success: true,
       data: {
         toDos: mockToDos,
+        total: mockToDos.length,
         page: 1,
         totalPages: 1,
       },
@@ -26,8 +27,8 @@ describe("TodoList interactions", () => {
 
     mockedService.bulkUpdateToDos.mockResolvedValue({ updatedToDos: [] });
     mockedService.bulkDeleteToDos.mockResolvedValue({ deletedToDos: [] });
-    mockedService.createToDo.mockResolvedValue({ id: "3" });
-    mockedService.updateToDo.mockResolvedValue({});
+    mockedService.createToDo.mockResolvedValue({ id: "3", title: "C", description: "desc C", completed: false });
+    mockedService.updateToDo.mockResolvedValue({ id: "1", title: "A", description: "desc A", completed: true });
   });
 
   afterEach(() => {
@@ -37,7 +38,7 @@ describe("TodoList interactions", () => {
   it("shows error and retries when getToDos fails", async () => {
     mockedService.getToDos
       .mockRejectedValueOnce(new Error("boom"))
-      .mockResolvedValueOnce({ success: true, data: { toDos: [], page: 1, totalPages: 1 } });
+      .mockResolvedValueOnce({ success: true, data: { toDos: [], total: 0, page: 1, totalPages: 1 } });
 
     render(<TodoList />);
 
@@ -122,8 +123,8 @@ describe("TodoList interactions", () => {
     const page2 = [ { id: "2", title: "P2-1", description: "", completed: false } ];
 
     mockedService.getToDos
-      .mockResolvedValueOnce({ success: true, data: { toDos: page1, page: 1, totalPages: 2 } })
-      .mockResolvedValueOnce({ success: true, data: { toDos: page2, page: 2, totalPages: 2 } });
+      .mockResolvedValueOnce({ success: true, data: { toDos: page1, total: 2, page: 1, totalPages: 2 } })
+      .mockResolvedValueOnce({ success: true, data: { toDos: page2, total: 2, page: 2, totalPages: 2 } });
 
     render(<TodoList />);
 

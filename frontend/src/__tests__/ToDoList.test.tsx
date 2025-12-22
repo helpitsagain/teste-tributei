@@ -1,4 +1,5 @@
 import React from "react";
+import { vi } from "vitest";
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import TodoList from "../components/ToDoList/ToDoList";
 import * as toDoService from "../services/toDoService";
@@ -18,14 +19,15 @@ describe("TodoList", () => {
       success: true,
       data: {
         toDos: mockToDos,
+        total: mockToDos.length,
         page: 1,
         totalPages: 1,
       },
     });
-    mockedService.bulkUpdateToDos.mockResolvedValue({});
-    mockedService.bulkDeleteToDos.mockResolvedValue({});
-    mockedService.createToDo.mockResolvedValue({});
-    mockedService.updateToDo.mockResolvedValue({});
+    mockedService.bulkUpdateToDos.mockResolvedValue({ updatedToDos: [] });
+    mockedService.bulkDeleteToDos.mockResolvedValue({ deletedToDos: [] });
+    mockedService.createToDo.mockResolvedValue(mockToDos[0]);
+    mockedService.updateToDo.mockResolvedValue(mockToDos[0]);
   });
 
   afterEach(() => {
