@@ -29,6 +29,41 @@ describe("todo.service", () => {
     expect(res.totalPages).toBe(Math.ceil(3 / 2));
   });
 
+  it("returns empty result when getToDosPaginated throws error", async () => {
+    vi.spyOn(sql, "getToDosPaginated").mockRejectedValue(new Error("DB Error"));
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const res = await service.getToDosPaginated(1, 10);
+
+    expect(res).toEqual({ toDos: [], total: 0, page: 1, totalPages: 0 });
+    expect(consoleSpy).toHaveBeenCalled();
+    consoleSpy.mockRestore();
+  });
+
+  it("returns filtered todos", async () => {
+    vi.spyOn(sql, "getToDosFiltered").mockResolvedValue({
+      toDos: [sampleToDos[0]],
+      total: 1,
+      page: 1,
+      totalPages: 1,
+    });
+
+    const res = await service.getToDosFiltered(1, 10, { title: "A" });
+
+    expect(res.toDos).toHaveLength(1);
+    expect(res.total).toBe(1);
+  });
+
+  it("returns empty result when getToDosFiltered throws error", async () => {
+    vi.spyOn(sql, "getToDosFiltered").mockRejectedValue(new Error("DB Error"));
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const res = await service.getToDosFiltered(1, 10, { title: "A" });
+
+    expect(res).toEqual({ toDos: [], total: 0, page: 1, totalPages: 0 });
+    consoleSpy.mockRestore();
+  });
+
   it("creates a new todo", async () => {
     const created = {
       id: "new-id",
@@ -122,6 +157,56 @@ describe("todo.service", () => {
     expect(deleted).toHaveLength(1);
     expect(deleted[0].id).toBe("2");
     expect(bulkDeleteSpy).toHaveBeenCalledWith(["2"]);
+  });
+
+  it("returns empty array when bulkUpdateToDos throws error", async () => {
+    vi.spyOn(sql, "bulkUpdateToDos").mockRejectedValue(new Error("DB Error"));
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const res = await service.bulkUpdateToDos(["1"], { completed: true });
+
+    expect(res).toEqual([]);
+    consoleSpy.mockRestore();
+  });
+
+  it("returns empty array when bulkDeleteToDos throws error", async () => {
+    vi.spyOn(sql, "bulkDeleteToDos").mockRejectedValue(new Error("DB Error"));
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const res = await service.bulkDeleteToDos(["1"]);
+
+    expect(res).toEqual([]);
+    consoleSpy.mockRestore();
+  });
+
+  it("returns null when updateToDo throws error", async () => {
+    vi.spyOn(sql, "updateToDo").mockRejectedValue(new Error("DB Error"));
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const res = await service.updateToDo("1", { title: "x" });
+
+    expect(res).toBeNull();
+    consoleSpy.mockRestore();
+  });
+
+  it("returns null when createToDo throws error", async () => {
+    vi.spyOn(sql, "createToDo").mockRejectedValue(new Error("DB Error"));
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const res = await service.createToDo("title", "desc");
+
+    expect(res).toBeNull();
+    consoleSpy.mockRestore();
+  });
+
+  it("returns null when deleteToDo throws error", async () => {
+    vi.spyOn(sql, "deleteToDo").mockRejectedValue(new Error("DB Error"));
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const res = await service.deleteToDo("1");
+
+    expect(res).toBeNull();
+    consoleSpy.mockRestore();
   });
 
   it("returns repository pagination result as-is", async () => {
