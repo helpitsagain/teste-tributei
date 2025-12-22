@@ -1,0 +1,21 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies (including dev)
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Set environment variables
+ENV VITE_API_BASE_URL=http://localhost:3001
+
+# Expose the port (Vite configured port)
+EXPOSE 3000
+
+# Start in development mode with host binding for Docker
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

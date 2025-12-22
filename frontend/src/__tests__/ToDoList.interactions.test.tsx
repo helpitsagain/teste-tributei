@@ -19,6 +19,7 @@ describe("TodoList interactions", () => {
       success: true,
       data: {
         toDos: mockToDos,
+        total: mockToDos.length,
         page: 1,
         totalPages: 1,
       },
@@ -26,8 +27,9 @@ describe("TodoList interactions", () => {
 
     mockedService.bulkUpdateToDos.mockResolvedValue({ updatedToDos: [] });
     mockedService.bulkDeleteToDos.mockResolvedValue({ deletedToDos: [] });
-    mockedService.createToDo.mockResolvedValue({ id: "3" });
-    mockedService.updateToDo.mockResolvedValue({});
+    mockedService.createToDo.mockResolvedValue({ id: "3", title: "C", description: "desc C", completed: false });
+    mockedService.updateToDo.mockResolvedValue({ id: "1", title: "A", description: "desc A", completed: true });
+    mockedService.deleteToDo.mockResolvedValue({ id: "1", title: "A", description: "desc A", completed: false });
   });
 
   afterEach(() => {
@@ -37,7 +39,7 @@ describe("TodoList interactions", () => {
   it("shows error and retries when getToDos fails", async () => {
     mockedService.getToDos
       .mockRejectedValueOnce(new Error("boom"))
-      .mockResolvedValueOnce({ success: true, data: { toDos: [], page: 1, totalPages: 1 } });
+      .mockResolvedValueOnce({ success: true, data: { toDos: [], total: 0, page: 1, totalPages: 1 } });
 
     render(<TodoList />);
 
@@ -122,8 +124,8 @@ describe("TodoList interactions", () => {
     const page2 = [ { id: "2", title: "P2-1", description: "", completed: false } ];
 
     mockedService.getToDos
-      .mockResolvedValueOnce({ success: true, data: { toDos: page1, page: 1, totalPages: 2 } })
-      .mockResolvedValueOnce({ success: true, data: { toDos: page2, page: 2, totalPages: 2 } });
+      .mockResolvedValueOnce({ success: true, data: { toDos: page1, total: 2, page: 1, totalPages: 2 } })
+      .mockResolvedValueOnce({ success: true, data: { toDos: page2, total: 2, page: 2, totalPages: 2 } });
 
     render(<TodoList />);
 
@@ -156,5 +158,184 @@ describe("TodoList interactions", () => {
 
     await waitFor(() => expect(toDoService.createToDo).toHaveBeenCalled());
     await waitFor(() => expect(screen.getByText(/create-failed/i)).toBeInTheDocument());
+  });
+
+  it("opens filters modal and applies filters", async () => {
+    render(<TodoList />);
+
+    await screen.findByText("A");
+
+    fireEvent.click(screen.getByRole("button", { name: "Filters" }));
+
+    // Modal should be open - check for combobox (status select)
+    await waitFor(() => expect(screen.getByRole("combobox")).toBeInTheDocument());
+
+    const textInputs = screen.getAllByRole("textbox");
+    fireEvent.change(textInputs[0], { target: { value: "Test" } });
+
+    fireEvent.click(screen.getByText("Apply"));
+
+    await waitFor(() => {
+      expect(toDoService.getToDos).toHaveBeenCalledWith(1, 10, { title: "Test" });
+    });
+  });
+
+  it("clears filters when Clear filters button is clicked", async () => {
+    mockedService.getToDos
+      .mockResolvedValueOnce({ success: true, data: { toDos: mockToDos, total: 2, page: 1, totalPages: 1 } })
+      .mockResolvedValueOnce({ success: true, data: { toDos: mockToDos, total: 2, page: 1, totalPages: 1 } })
+      .mockResolvedValueOnce({ success: true, data: { toDos: mockToDos, total: 2, page: 1, totalPages: 1 } });
+
+    render(<TodoList />);
+
+    await screen.findByText("A");
+
+    fireEvent.click(screen.getByRole("button", { name: "Filters" }));
+
+    await waitFor(() => expect(screen.getByRole("combobox")).toBeInTheDocument());
+
+    const textInputs = screen.getAllByRole("textbox");
+    fireEvent.change(textInputs[0], { target: { value: "Test" } });
+    fireEvent.click(screen.getByText("Apply"));
+
+    await waitFor(() => expect(screen.getByRole("button", { name: "Clear filters" })).toBeInTheDocument());
+
+    fireEvent.click(screen.getByRole("button", { name: "Clear filters" }));
+
+    await waitFor(() => {
+      expect(toDoService.getToDos).toHaveBeenCalled();
+    });
+  });
+
+  it("cancels filters modal without applying", async () => {
+    render(<TodoList />);
+
+    await screen.findByText("A");
+
+    fireEvent.click(screen.getByRole("button", { name: "Filters" }));
+
+    await waitFor(() => expect(screen.getByRole("combobox")).toBeInTheDocument());
+
+    const textInputs = screen.getAllByRole("textbox");
+    fireEvent.change(textInputs[0], { target: { value: "Test" } });
+
+    fireEvent.click(screen.getByText("Cancel"));
+
+    await waitFor(() => expect(screen.queryByRole("combobox")).not.toBeInTheDocument());
+  });
+
+  it("deselects individual items when clicked again", async () => {
+    render(<TodoList />);
+
+    await screen.findByText("A");
+
+    fireEvent.click(screen.getByRole("button", { name: /Select All/i }));
+    expect(screen.getByRole("button", { name: /Deselect All/i })).toBeInTheDocument();
+
+    const checkboxes = screen.getAllByRole("checkbox");
+    fireEvent.click(checkboxes[0]);
+
+    expect(screen.getByRole("button", { name: /^Select All$/i })).toBeInTheDocument();
+  });
+
+  it("shows Deselect all button when some but not all items are selected", async () => {
+    const manyToDos = [
+      { id: "1", title: "A", description: "desc A", completed: false },
+      { id: "2", title: "B", description: "desc B", completed: false },
+      { id: "3", title: "C", description: "desc C", completed: false },
+    ];
+
+    mockedService.getToDos.mockResolvedValueOnce({
+      success: true,
+      data: { toDos: manyToDos, total: 3, page: 1, totalPages: 1 },
+    });
+
+    render(<TodoList />);
+
+    await screen.findByText("A");
+
+    const checkboxes = screen.getAllByRole("checkbox");
+    fireEvent.click(checkboxes[0]);
+
+    const deselectAllBtn = screen.getByRole("button", { name: /^Deselect all$/i });
+    expect(deselectAllBtn).toBeInTheDocument();
+  });
+
+  it("deletes a single todo item", async () => {
+    render(<TodoList />);
+
+    await screen.findByText("A");
+
+    const editBtns = screen.getAllByText("Edit");
+    fireEvent.click(editBtns[0]);
+
+    fireEvent.click(screen.getByText("Delete"));
+    fireEvent.click(screen.getByText(/Delete item\?/i));
+
+    await waitFor(() => expect(toDoService.deleteToDo).toHaveBeenCalledWith("1"));
+  });
+
+  it("shows error when updateToDo fails", async () => {
+    mockedService.updateToDo.mockRejectedValueOnce({ response: { data: { error: "update-failed" } } });
+
+    render(<TodoList />);
+
+    await screen.findByText("A");
+
+    const editBtns = screen.getAllByText("Edit");
+    fireEvent.click(editBtns[0]);
+
+    const titleInput = screen.getByDisplayValue("A");
+    fireEvent.change(titleInput, { target: { value: "Updated" } });
+
+    fireEvent.click(screen.getByText("Save"));
+
+    await waitFor(() => expect(toDoService.updateToDo).toHaveBeenCalled());
+  });
+
+  it("shows error when deleteToDo fails", async () => {
+    mockedService.deleteToDo.mockRejectedValueOnce({ response: { data: { error: "delete-failed" } } });
+
+    render(<TodoList />);
+
+    await screen.findByText("A");
+
+    const editBtns = screen.getAllByText("Edit");
+    fireEvent.click(editBtns[0]);
+
+    fireEvent.click(screen.getByText("Delete"));
+    fireEvent.click(screen.getByText(/Delete item\?/i));
+
+    await waitFor(() => expect(toDoService.deleteToDo).toHaveBeenCalled());
+  });
+
+  it("shows error when bulkUpdateToDos fails", async () => {
+    mockedService.bulkUpdateToDos.mockRejectedValueOnce({ response: { data: { error: "bulk-update-failed" } } });
+
+    render(<TodoList />);
+
+    await screen.findByText("A");
+
+    fireEvent.click(screen.getByText(/Select All/i));
+    fireEvent.click(screen.getByText("Bulk Actions"));
+
+    fireEvent.click(screen.getByText(/Mark all as Completed/i));
+    fireEvent.click(screen.getByText(/Confirm$/i));
+
+    await waitFor(() => expect(toDoService.bulkUpdateToDos).toHaveBeenCalled());
+  });
+
+  it("performs bulk delete successfully", async () => {
+    render(<TodoList />);
+
+    await screen.findByText("A");
+
+    fireEvent.click(screen.getByText(/Select All/i));
+    fireEvent.click(screen.getByText("Bulk Actions"));
+
+    fireEvent.click(screen.getByText(/Delete items/i));
+    fireEvent.click(screen.getByText(/Confirm$/i));
+
+    await waitFor(() => expect(toDoService.bulkDeleteToDos).toHaveBeenCalledWith(["1", "2"]));
   });
 });

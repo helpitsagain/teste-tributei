@@ -12,6 +12,9 @@ Aplicação full-stack para gerenciamento de tarefas (To-Do List) construída co
   - [Back-end](#back-end)
   - [Front-end](#front-end)
 - [Executando a Aplicação](#executando-a-aplicação)
+  - [Modo Desenvolvimento](#modo-desenvolvimento)
+  - [Modo Produção](#modo-produção)
+  - [Com Docker](#com-docker)
 - [Scripts Disponíveis](#scripts-disponíveis)
 - [Endpoints da API](#endpoints-da-api)
 - [Solução de Problemas](#solução-de-problemas)
@@ -49,9 +52,10 @@ O deploy do projeto foi feito no Vercel e pode ser acessado pelos seguintes link
 
 Antes de começar, certifique-se de ter instalado em sua máquina:
 
-- **Node.js** (versão 18. x ou superior recomendada)
+- **Node.js** (versão 18.x ou superior recomendada)
 - **npm** (geralmente instalado junto com o Node.js) ou **yarn**
 - **Git** (para clonar o repositório)
+- **Docker** e **Docker Compose** (opcional, para execução containerizada)
 
 Para verificar se você tem as ferramentas instaladas, execute:
 
@@ -59,6 +63,8 @@ Para verificar se você tem as ferramentas instaladas, execute:
 node --version
 npm --version
 git --version
+docker --version
+docker compose version
 ```
 
 ## Estrutura do Projeto
@@ -71,8 +77,10 @@ teste-tributei/
 │   │   ├── models/          # Modelos de dados
 │   │   ├── routes/          # Definição de rotas
 │   │   ├── services/        # Lógica de negócio
-│   │   ├── app. ts          # Configuração do Express
+│   │   ├── app.ts           # Configuração do Express
 │   │   └── server.ts        # Ponto de entrada do servidor
+│   ├── Dockerfile           # Dockerfile de produção
+│   ├── Dockerfile.dev       # Dockerfile de desenvolvimento
 │   ├── package.json
 │   └── tsconfig.json
 │
@@ -85,11 +93,16 @@ teste-tributei/
 │   │   ├── types/           # Definições de tipos TypeScript
 │   │   ├── App.tsx          # Componente principal
 │   │   └── index.tsx        # Ponto de entrada
+│   ├── Dockerfile           # Dockerfile de produção (Nginx)
+│   ├── Dockerfile.dev       # Dockerfile de desenvolvimento
+│   ├── nginx.conf           # Configuração do Nginx
 │   ├── package.json
 │   ├── tsconfig.json
-│   └── vite.config. ts
+│   └── vite.config.ts
 │
-└── . gitignore
+├── docker-compose.yml       # Orquestração de produção
+├── docker-compose.dev.yml   # Orquestração de desenvolvimento
+└── .gitignore
 ```
 
 ## Instalação e Configuração
@@ -179,6 +192,52 @@ npm run build
 ```
 
 Os arquivos de build serão gerados na pasta `dist/` e podem ser servidos por qualquer servidor web estático.
+
+### Com Docker
+
+A forma mais simples de executar toda a aplicação é utilizando Docker Compose.
+
+#### Desenvolvimento (com hot-reload)
+
+```bash
+# Na raiz do projeto
+docker compose -f docker-compose.dev.yml up --build
+```
+
+Serviços disponíveis:
+- **Frontend**: http://localhost:3000
+- **Backend**: http://localhost:3001
+- **Swagger**: http://localhost:3001/swagger
+
+#### Produção
+
+```bash
+# Na raiz do projeto
+docker compose up --build
+```
+
+Serviços disponíveis:
+- **Frontend**: http://localhost:80
+- **Backend**: http://localhost:3001
+
+#### Comandos úteis do Docker
+
+```bash
+# Parar os containers
+docker compose down
+
+# Ver logs dos containers
+docker compose logs -f
+
+# Rebuild sem cache
+docker compose build --no-cache
+
+# Executar apenas o backend
+docker compose up backend
+
+# Executar apenas o frontend
+docker compose up frontend
+```
 
 ## Scripts Disponíveis
 
