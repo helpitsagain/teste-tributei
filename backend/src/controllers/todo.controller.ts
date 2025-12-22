@@ -20,11 +20,11 @@ export const getToDos = async (req: Request, res: Response) => {
 
     const result = await toDoService.getToDosPaginated(page, limit, completed);
 
-    res.json(result);
+    res.json({ success: true, data: { toDos: result } });
   } catch (e) {
     console.error(e);
 
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -34,18 +34,23 @@ export const getToDosFiltered = async (req: Request, res: Response) => {
     const limit = parseInt(req.query.limit as string) || 20;
     const completed = parseBoolean(req.query.completed as string);
 
-    const filters: Partial<CreateToDoRequest & { completed?: boolean } & Record<string, any>> = {};
+    const filters: Partial<CreateToDoRequest & Record<string, any>> = {};
 
     if (typeof completed !== "undefined") filters.completed = completed;
     if (req.query.title) filters.title = String(req.query.title);
-    if (req.query.description) filters.description = String(req.query.description);
+    if (req.query.description)
+      filters.description = String(req.query.description);
 
-    const result = await toDoService.getToDosFiltered(page, limit, filters as any);
+    const result = await toDoService.getToDosFiltered(
+      page,
+      limit,
+      filters as any,
+    );
 
-    res.json(result);
+    res.json({ success: true, data: { toDos: result } });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -64,11 +69,11 @@ export const updateToDo = async (req: Request, res: Response) => {
 
     console.info(`Updated to-do '${id}'`);
 
-    res.json(toDo);
+    res.json({ success: true, data: toDo });
   } catch (e) {
     console.error(e);
 
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -77,9 +82,10 @@ export const bulkUpdateToDos = async (req: Request, res: Response) => {
     const { ids, updates }: BulkUpdateRequest = req.body;
 
     if (!Array.isArray(ids)) {
-      return res
-        .status(400)
-        .json({ message: "ids must be an array and updates must be provided" });
+      return res.status(400).json({
+        success: false,
+        message: "ids must be an array and updates must be provided",
+      });
     }
 
     const updatedToDos = await toDoService.bulkUpdateToDos(ids, updates);
@@ -90,7 +96,7 @@ export const bulkUpdateToDos = async (req: Request, res: Response) => {
   } catch (e) {
     console.error(e);
 
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -99,20 +105,21 @@ export const bulkDeleteToDos = async (req: Request, res: Response) => {
     const { ids }: BulkDeleteRequest = req.body;
 
     if (!Array.isArray(ids) || ids.length === 0) {
-      return res
-        .status(400)
-        .json({ message: "ids must be an array and must be provided" });
+      return res.status(400).json({
+        success: false,
+        message: "ids must be an array and must be provided",
+      });
     }
 
     const updatedTodos = await toDoService.bulkDeleteToDos(ids);
 
     console.log("bulk delete!");
 
-    res.json({ updatedTodos });
+    res.json({ success: true, data: updatedTodos });
   } catch (e) {
     console.error(e);
 
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -126,11 +133,11 @@ export const createToDo = async (req: Request, res: Response) => {
 
     const newToDo = await toDoService.createToDo(title, description);
 
-    res.json({ newToDo });
+    res.json({ success: true, data: newToDo });
   } catch (e) {
     console.error(e);
 
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -142,13 +149,15 @@ export const deleteToDo = async (req: Request, res: Response) => {
 
     if (!toDo) {
       console.error("to-do not found");
-      return res.status(404).json({ message: "To-do not found." });
+      return res
+        .status(404)
+        .json({ success: false, message: "To-do not found." });
     }
 
-    res.json(toDo);
+    res.json({ success: true, data: toDo });
   } catch (e) {
     console.error(e);
 
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };

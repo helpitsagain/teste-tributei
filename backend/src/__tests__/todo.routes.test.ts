@@ -23,8 +23,8 @@ describe("todo.routes", () => {
     const res = await request(app).get("/api/items");
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty("toDos");
-    expect(res.body.toDos).toHaveLength(1);
+    expect(res.body.data).toHaveProperty("toDos");
+    expect(res.body.data.toDos.toDos).toHaveLength(1);
   });
 
   it("POST /api/item/new creates a todo", async () => {
@@ -40,8 +40,8 @@ describe("todo.routes", () => {
       .send({ title: "T", description: "D" });
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty("newToDo");
-    expect(res.body.newToDo.title).toBe("T");
+    expect(res.body.data).toHaveProperty("id");
+    expect(res.body.data.title).toBe("T");
   });
 
   it("PUT /api/item/:id returns 404 for not found", async () => {
@@ -68,8 +68,8 @@ describe("todo.routes", () => {
       .send({ title: "A-updated" });
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty("title");
-    expect(res.body.title).toBe("A-updated");
+    expect(res.body.data).toHaveProperty("title");
+    expect(res.body.data.title).toBe("A-updated");
   });
 
   it("DELETE /api/item/:id deletes and returns the todo", async () => {
@@ -83,8 +83,8 @@ describe("todo.routes", () => {
     const res = await request(app).delete("/api/item/1");
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty("id");
-    expect(res.body.id).toBe("1");
+    expect(res.body.data).toHaveProperty("id");
+    expect(res.body.data.id).toBe("1");
   });
 
   it("DELETE /api/item/:id returns 404 when not found", async () => {
@@ -167,8 +167,8 @@ describe("todo.routes", () => {
       .send({ ids: ["2"] });
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty("updatedTodos");
-    expect(res.body.updatedTodos).toHaveLength(1);
-    expect(res.body.updatedTodos[0].id).toBe("2");
+    expect(res.body.data[0]).toHaveProperty("id");
+    expect(res.body.data).toHaveLength(1);
+    expect(res.body.data[0].id).toBe("2");
   });
 });
