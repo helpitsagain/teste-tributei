@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Error from "../Error/Error";
 import "./FiltersModal.scss";
 
@@ -41,6 +41,15 @@ const FiltersModal: React.FC<
 
     onConfirm(hasFilters ? filters : undefined);
   };
+
+  // impede o scroll enquanto a modal estiver aberta
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
 
   return (
     <div className="modal-overlay">

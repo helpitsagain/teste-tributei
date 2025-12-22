@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ToDo } from "../../types/toDo";
 import "./BulkActionModal.scss";
 
@@ -20,6 +20,7 @@ const BulkActionModal: React.FC<BulkActionModalProps> = ({
   onCancel,
 }) => {
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
+  const [showAll, setShowAll] = useState(false);
 
   const selectedToDos = toDos.filter((todo) => selectedIds.includes(todo.id));
 
@@ -59,6 +60,15 @@ const BulkActionModal: React.FC<BulkActionModalProps> = ({
     }
   };
 
+  // impede o scroll enquanto a modal estiver aberta
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
+
   return (
     <div className="modal-overlay">
       <div className="bulk-action-modal">
@@ -73,14 +83,36 @@ const BulkActionModal: React.FC<BulkActionModalProps> = ({
 
             <div className="bulk-action-modal__preview">
               <h3>Preview:</h3>
-              <ul>
-                {selectedToDos.slice(0, 5).map((todo) => (
-                  <li key={todo.id}>{todo.title}</li>
-                ))}
-                {selectedToDos.length > 5 && (
-                  <li>...and {selectedToDos.length - 5} more</li>
-                )}
-              </ul>
+              {!showAll ? (
+                <ul>
+                  {selectedToDos.slice(0, 5).map((todo) => (
+                    <li key={todo.id}>{todo.title}</li>
+                  ))}
+                  {selectedToDos.length > 5 && (
+                    <li
+                      className="bulk-action-modal__more-link"
+                      onClick={() => setShowAll(true)}
+                    >
+                      ...and {selectedToDos.length - 5} more
+                    </li>
+                  )}
+                </ul>
+              ) : (
+                <div className="bulk-action-modal__more-textbox" role="region">
+                  <button
+                    className="bulk-action-modal__more-close"
+                    onClick={() => setShowAll(false)}
+                    aria-label="Close full list"
+                  >
+                    ×
+                  </button>
+                  <div className="bulk-action-modal__more-content">
+                    {selectedToDos.map((t) => (
+                      <div key={t.id}>{t.title}</div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="bulk-action-modal__actions">
@@ -114,14 +146,36 @@ const BulkActionModal: React.FC<BulkActionModalProps> = ({
             )}
             <div className="bulk-action-modal__preview">
               <h3>Preview:</h3>
-              <ul>
-                {selectedToDos.slice(0, 5).map((todo) => (
-                  <li key={todo.id}>{todo.title}</li>
-                ))}
-                {selectedToDos.length > 5 && (
-                  <li>...and {selectedToDos.length - 5} more</li>
-                )}
-              </ul>
+              {!showAll ? (
+                <ul>
+                  {selectedToDos.slice(0, 5).map((todo) => (
+                    <li key={todo.id}>{todo.title}</li>
+                  ))}
+                  {selectedToDos.length > 5 && (
+                    <li
+                      className="bulk-action-modal__more-link"
+                      onClick={() => setShowAll(true)}
+                    >
+                      ...and {selectedToDos.length - 5} more
+                    </li>
+                  )}
+                </ul>
+              ) : (
+                <div className="bulk-action-modal__more-textbox" role="region">
+                  <button
+                    className="bulk-action-modal__more-close"
+                    onClick={() => setShowAll(false)}
+                    aria-label="Close full list"
+                  >
+                    ×
+                  </button>
+                  <div className="bulk-action-modal__more-content">
+                    {selectedToDos.map((t) => (
+                      <div key={t.id}>{t.title}</div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="bulk-action-modal__actions">
